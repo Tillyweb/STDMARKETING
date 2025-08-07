@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dental Lab Marketing (Pastel Theme)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Sarabun', sans-serif;
+            background-color: #f5f3ff; /* Lightest Purple */
+        }
+        .view {
+            display: none;
+        }
+        .view.active {
+            display: block;
+        }
+        .swal2-popup {
+            font-family: 'Inter', 'Sarabun', sans-serif;
+        }
+        .theme-btn-primary {
+            background-color: #8b5cf6; /* Violet-500 */
+            color: white;
+        }
+        .theme-btn-primary:hover {
+            background-color: #7c3aed; /* Violet-600 */
+        }
+        .theme-btn-secondary {
+            background-color: #4c1d95; /* Violet-900 */
+            color: white;
+        }
+         .theme-btn-secondary:hover {
+            background-color: #431a82;
+        }
+        .theme-header {
+            background-color: #3730a3; /* Indigo-800 for a deep purple feel */
+        }
+        /* Print Styles */
+        @media print {
+            body, #app, main {
+                background-color: white;
+                margin: 0;
+                padding: 0;
+            }
+            header, #print-controls {
+                display: none;
+            }
+            .view {
+                display: none !important;
+            }
+            #print-view {
+                display: block !important;
+                padding-top: 0 !important;
+            }
+            main {
+                padding-top: 0 !important;
+            }
+            #print-content {
+                border: none !important;
+                box-shadow: none !important;
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div id="app">
+        <header class="theme-header text-white shadow-lg fixed top-0 left-0 right-0 z-50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <h1 class="text-xl font-bold">Dental Lab Marketing</h1>
+                    
+                    <!-- Logged Out Navigation -->
+                    <div id="logged-out-nav" class="hidden md:flex items-center space-x-2">
+                        <button onclick="promptForPassword('Admin')" class="hover:bg-white/10 px-3 py-2 rounded-md text-sm font-medium">Admin Login</button>
+                        <button onclick="promptForPassword('Standard User')" class="hover:bg-white/10 px-3 py-2 rounded-md text-sm font-medium">Standard User Login</button>
+                    </div>
+
+                    <!-- Logged In Navigation -->
+                    <div id="logged-in-nav" class="hidden md:flex items-center space-x-4">
+                        <button onclick="switchView('main-view')" class="hover:bg-white/10 px-3 py-2 rounded-md text-sm font-medium">หน้าหลัก (ตาราง)</button>
+                        <button onclick="switchView('dashboard-view')" class="hover:bg-white/10 px-3 py-2 rounded-md text-sm font-medium">แดชบอร์ด</button>
+                        <p id="user-role-display" class="px-3 py-2 text-sm font-medium text-gray-300">|</p>
+                        <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-3 py-2 rounded-md text-sm font-medium">ออกจากระบบ</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="container mx-auto p-4 md:p-8 pt-24 hidden"> {/* Hidden by default */}
+            <!-- Main Table View -->
+            <div id="main-view" class="view">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="ค้นหา..." class="w-full md:w-1/3 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500">
+                        <div class="flex space-x-2">
+                             <button onclick="fetchData()" class="theme-btn-secondary font-semibold py-2 px-4 rounded-lg">
+                                อัพเดทข้อมูล
+                            </button>
+                            <button onclick="showRequestForm()" class="theme-btn-primary font-semibold py-2 px-4 rounded-lg">
+                                +เพิ่มคลินิกใหม่
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table id="requestsTable" class="min-w-full bg-white">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm text-gray-600">ชื่อทันตแพทย์</th>
+                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm text-gray-600">ชื่อคลินิก</th>
+                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm text-gray-600">ที่อยู่</th>
+                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm text-gray-600">เบอร์โทร</th>
+                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm text-gray-600">สถานะ</th>
+                                    <th class="text-center py-3 px-4 uppercase font-semibold text-sm text-gray-600">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody" class="text-gray-700">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New/Edit Request Form View -->
+            <div id="form-view" class="view">
+                 <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+                    <h2 id="form-title" class="text-2xl font-bold mb-6 text-black">เพิ่มคลินิกใหม่</h2>
+                    <form id="requestForm" onsubmit="saveData(event)" class="space-y-4">
+                        <input type="hidden" id="recordId">
+                        <input type="hidden" id="originalData">
+                        <div>
+                            <label for="dentistName" class="block text-gray-700 text-sm font-medium mb-1">ชื่อทันตแพทย์</label>
+                            <input type="text" id="dentistName" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" required>
+                        </div>
+                        <div>
+                            <label for="clinicName" class="block text-gray-700 text-sm font-medium mb-1">ชื่อคลินิก</label>
+                            <input type="text" id="clinicName" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" required>
+                        </div>
+                        <div>
+                            <label for="address" class="block text-gray-700 text-sm font-medium mb-1">ที่อยู่</label>
+                            <textarea id="address" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" required></textarea>
+                        </div>
+                        <div>
+                            <label for="phoneNumber" class="block text-gray-700 text-sm font-medium mb-1">เบอร์โทรศัพท์</label>
+                            <input type="tel" id="phoneNumber" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" required>
+                        </div>
+                        <div class="flex items-center justify-end space-x-4 pt-4">
+                            <button type="button" onclick="switchView('main-view')" class="bg-gray-200 hover:bg-gray-300 text-black font-bold py-2 px-4 rounded-lg">
+                                ยกเลิก
+                            </button>
+                            <button type="submit" class="theme-btn-primary font-bold py-2 px-4 rounded-lg">
+                                บันทึก
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <div class="flex flex-wrap justify-between items-center mb-6 gap-2">
+                        <h2 class="text-2xl font-bold text-black">Dashboard</h2>
+                        <button id="analysis-button" onclick="getMarketingAnalysis()" class="theme-btn-primary font-semibold py-2 px-4 rounded-lg" disabled>✨ วิเคราะห์และเสนอแนะ</button>
+                    </div>
+                     <div class="mb-6">
+                        <label for="yearFilter" class="block text-sm font-medium text-gray-700">เลือกปี:</label>
+                        <select id="yearFilter" onchange="updateDashboard()" class="mt-1 block w-full md:w-1/4 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-violet-500 sm:text-sm rounded-lg">
+                            <!-- Year options will be populated here -->
+                        </select>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2 text-black">สรุปสถานะคำขอรายเดือน</h3>
+                        <canvas id="statusByMonthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Print View -->
+            <div id="print-view" class="view">
+                <div id="print-content" class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold mb-6 pb-2 border-b-2 border-black text-black">ใบปะหน้าสำหรับจัดส่ง</h2>
+                    <div class="space-y-4 text-lg font-['Sarabun']">
+                         <div class="flex">
+                            <p class="w-1/4 font-bold">ผู้รับ:</p>
+                            <p id="print-dentist-name" class="w-3/4"></p>
+                        </div>
+                        <div class="flex">
+                             <p class="w-1/4 font-bold">คลินิก:</p>
+                             <p id="print-clinic-name" class="w-3/4"></p>
+                        </div>
+                        <div class="flex">
+                            <p class="w-1/4 font-bold">ที่อยู่:</p>
+                            <p id="print-address" class="w-3/4"></p>
+                        </div>
+                        <div class="flex">
+                            <p class="w-1/4 font-bold">เบอร์โทร:</p>
+                            <p id="print-phone" class="w-3/4"></p>
+                        </div>
+                    </div>
+                </div>
+                <div id="print-controls" class="max-w-2xl mx-auto mt-6 flex justify-end space-x-4">
+                    <button onclick="switchView('main-view')" class="bg-gray-200 hover:bg-gray-300 text-black font-bold py-2 px-4 rounded-lg">
+                        กลับ
+                    </button>
+                    <button onclick="window.print()" class="theme-btn-primary font-bold py-2 px-4 rounded-lg">
+                        🖨️ สั่งพิมพ์
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // IMPORTANT: Replace with your deployed Google Apps Script URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXoLnQNeEbHVojeF0DdoBhaZ8ff9miGFQotC15OpR6zlSuc6ACrWaktdmclL7xD_ekGQ/exec';
+        
+        let allRequests = [];
+        let dashboardData = [];
+        let statusByMonthChart;
+        let currentAudio = null;
+
+        // --- Core App Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const userRole = localStorage.getItem('userRole');
+            if (userRole) {
+                showMainApp(userRole);
+            } else {
+                showLoggedOutState();
+            }
+        });
+
+        function showLoggedOutState() {
+            document.getElementById('logged-out-nav').style.display = 'flex';
+            document.getElementById('logged-in-nav').style.display = 'none';
+            document.querySelector('main').style.display = 'none';
+        }
+
+        function promptForPassword(role) {
+            const roleConfig = {
+                'Admin': { code: '8956', title: 'Admin' },
+                'Standard User': { code: 'std497', title: 'Standard User' }
+            };
+
+            Swal.fire({
+                title: `กรุณาใส่รหัสสำหรับ ${roleConfig[role].title}`,
+                input: 'password',
+                inputPlaceholder: 'ใส่รหัสผ่าน',
+                inputAttributes: { autocapitalize: 'off', autocorrect: 'off' },
+                showCancelButton: true,
+                confirmButtonText: 'เข้าสู่ระบบ',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#8b5cf6',
+                showLoaderOnConfirm: true,
+                preConfirm: (password) => {
+                    if (password === roleConfig[role].code) return true;
+                    else { Swal.showValidationMessage('รหัสผ่านไม่ถูกต้อง'); return false; }
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.setItem('userRole', role);
+                    showMainApp(role);
+                }
+            });
+        }
+
+        function showMainApp(role) {
+            document.getElementById('user-role-display').textContent = `| บทบาท: ${role}`;
+            document.getElementById('analysis-button').style.display = role === 'Admin' ? 'block' : 'none';
+            
+            document.getElementById('logged-out-nav').style.display = 'none';
+            document.getElementById('logged-in-nav').style.display = 'flex';
+            document.querySelector('main').style.display = 'block';
+
+            switchView('main-view'); // Start at the main table view
+            fetchData();
+            fetchDashboardData();
+        }
+
+        function logout() {
+            localStorage.removeItem('userRole');
+            allRequests = [];
+            dashboardData = [];
+            if(statusByMonthChart) {
+                statusByMonthChart.destroy();
+                statusByMonthChart = null;
+            }
+            if(currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+            }
+            showLoggedOutState();
+        }
+
+        function switchView(viewId) {
+            const mainViews = document.querySelectorAll('main .view');
+            mainViews.forEach(v => v.classList.remove('active'));
+            const viewElement = document.getElementById(viewId);
+            if(viewElement) {
+                viewElement.classList.add('active');
+            }
+        }
+
+        function jsonpRequest(url, callbackName) {
+            const script = document.createElement('script');
+            script.src = url;
+            document.body.appendChild(script);
+            script.onload = () => document.body.removeChild(script);
+            script.onerror = () => {
+                document.body.removeChild(script);
+                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้', 'error');
+            };
+        }
+
+        // --- Data Fetching and Display ---
+        function fetchData() {
+            const url = `${SCRIPT_URL}?action=getRequests&callback=displayData`;
+            jsonpRequest(url);
+        }
+
+        function displayData(data) {
+            if (data.error) { console.error("Fetch data error:", data.error); return; }
+            allRequests = data.records;
+            localStorage.setItem('allRequests', JSON.stringify(allRequests));
+            renderTable(allRequests);
+        }
+
+        function renderTable(requests) {
+            const tableBody = document.getElementById('tableBody');
+            const userRole = localStorage.getItem('userRole');
+            tableBody.innerHTML = '';
+            if (!requests || requests.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" class="text-center py-4">ไม่พบข้อมูล</td></tr>';
+                return;
+            }
+            requests.forEach(req => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-gray-200 hover:bg-gray-50';
+                
+                let actionsHtml = `<button onclick="goToPrintView('${req.ID || ''}')" class="text-gray-600 hover:text-gray-800 font-medium mr-3">🖨️ พิมพ์</button>`
+                actionsHtml += `<button onclick="editRequest('${req.ID || ''}')" class="text-blue-600 hover:text-blue-800 font-medium mr-3">แก้ไข</button>`;
+                if (req.Status === 'Pending') {
+                    actionsHtml += `<button onclick="markAsSent('${req.ID || ''}')" class="text-green-600 hover:text-green-800 font-medium mr-3">ส่งเอกสารแล้ว</button>`;
+                }
+                if (userRole === 'Admin') {
+                    actionsHtml += `<button onclick="generateFollowUpEmail('${req.DentistName || ''}', '${req.ClinicName || ''}')" class="text-purple-600 hover:text-purple-800 font-medium mr-3">✨ สร้างอีเมล</button>`;
+                    actionsHtml += `<button onclick="deleteRequest('${req.ID || ''}')" class="text-red-600 hover:text-red-800 font-medium">ลบ</button>`;
+                }
+                let statusText = req.Status || 'Pending';
+                let statusColor = 'bg-yellow-100 text-yellow-800';
+                if (statusText === 'Approved') { statusColor = 'bg-green-100 text-green-800'; } 
+                else if (statusText === 'ส่งแล้ว') { statusColor = 'bg-blue-100 text-blue-800'; }
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4">${req.DentistName || ''}</td>
+                    <td class="py-3 px-4">${req.ClinicName || ''}</td>
+                    <td class="py-3 px-4">${req.Address || ''}</td>
+                    <td class="py-3 px-4">${req.PhoneNumber || ''}</td>
+                    <td class="py-3 px-4"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">${statusText}</span></td>
+                    <td class="py-3 px-4 text-center">${actionsHtml}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+        
+        function filterTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toUpperCase();
+            const filteredRequests = allRequests.filter(req => {
+                const dentistName = req.DentistName || '';
+                const clinicName = req.ClinicName || '';
+                return clinicName.toUpperCase().includes(filter) || dentistName.toUpperCase().includes(filter);
+            });
+            renderTable(filteredRequests);
+        }
+
+        function markAsSent(id) {
+            Swal.fire({ title: 'ยืนยันการส่งเอกสาร', text: "คุณต้องการเปลี่ยนสถานะเป็น 'ส่งแล้ว' ใช่หรือไม่?", icon: 'question', showCancelButton: true, confirmButtonText: 'ใช่, ยืนยัน!', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#8b5cf6' }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'กำลังอัพเดทสถานะ...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+                    const url = `${SCRIPT_URL}?action=updateStatus&callback=handleSaveResponse&id=${id}&status=${encodeURIComponent('ส่งแล้ว')}`;
+                    jsonpRequest(url);
+                }
+            });
+        }
+
+        // --- Print Function (Revised) ---
+        function goToPrintView(id) {
+            const record = allRequests.find(r => r.ID === id);
+            if (!record) {
+                Swal.fire('ข้อผิดพลาด', 'ไม่พบข้อมูลสำหรับพิมพ์', 'error');
+                return;
+            }
+            document.getElementById('print-dentist-name').textContent = record.DentistName || '';
+            document.getElementById('print-clinic-name').textContent = record.ClinicName || '';
+            document.getElementById('print-address').textContent = record.Address || '';
+            document.getElementById('print-phone').textContent = record.PhoneNumber || '';
+            
+            switchView('print-view');
+        }
+
+
+        // --- Form Handling & Data Saving ---
+        function showRequestForm() {
+            document.getElementById('form-title').textContent = 'เพิ่มคลินิกใหม่';
+            document.getElementById('requestForm').reset();
+            document.getElementById('recordId').value = '';
+            document.getElementById('originalData').value = '';
+            switchView('form-view');
+        }
+
+        function editRequest(id) {
+            const record = allRequests.find(r => r.ID === id);
+            if (!record) return;
+            showRequestForm();
+            document.getElementById('form-title').textContent = 'แก้ไขข้อมูลคลินิก';
+            document.getElementById('recordId').value = record.ID;
+            document.getElementById('dentistName').value = record.DentistName;
+            document.getElementById('clinicName').value = record.ClinicName;
+            document.getElementById('address').value = record.Address;
+            document.getElementById('phoneNumber').value = record.PhoneNumber;
+            document.getElementById('originalData').value = JSON.stringify({ DentistName: record.DentistName, ClinicName: record.ClinicName, Address: record.Address, PhoneNumber: record.PhoneNumber });
+        }
+
+        function saveData(event) {
+            event.preventDefault();
+            const userRole = localStorage.getItem('userRole');
+            const recordId = document.getElementById('recordId').value;
+            const data = { ID: recordId, DentistName: document.getElementById('dentistName').value, ClinicName: document.getElementById('clinicName').value, Address: document.getElementById('address').value, PhoneNumber: document.getElementById('phoneNumber').value };
+            if (recordId && userRole === 'Standard User') {
+                const originalData = JSON.parse(document.getElementById('originalData').value);
+                requestEditApproval(originalData, data);
+            } else {
+                const action = recordId ? 'updateRequest' : 'addRequest';
+                const url = `${SCRIPT_URL}?action=${action}&callback=handleSaveResponse&data=${encodeURIComponent(JSON.stringify(data))}`;
+                Swal.fire({ title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+                jsonpRequest(url);
+            }
+        }
+
+        function handleSaveResponse(response) {
+            if (response.result === 'success') {
+                Swal.fire('สำเร็จ!', response.message, 'success');
+                switchView('main-view');
+                fetchData(); 
+            } else {
+                Swal.fire('เกิดข้อผิดพลาด', response.message, 'error');
+            }
+        }
+
+        function requestEditApproval(oldData, newData) {
+             Swal.fire({ title: 'ส่งคำขอแก้ไข', text: "คุณไม่มีสิทธิ์แก้ไขข้อมูล ระบบจะส่งคำขอแก้ไขไปยัง Admin เพื่ออนุมัติ", icon: 'info', showCancelButton: true, confirmButtonText: 'ยืนยันส่งคำขอ', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#8b5cf6' }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'กำลังส่งคำขอ...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+                    const payload = { oldData, newData };
+                    const url = `${SCRIPT_URL}?action=requestEditApproval&callback=handleApprovalResponse&data=${encodeURIComponent(JSON.stringify(payload))}`;
+                    jsonpRequest(url);
+                }
+            });
+        }
+        
+        function handleApprovalResponse(response) {
+             if (response.result === 'success') {
+                Swal.fire('ส่งคำขอสำเร็จ!', 'คำขอแก้ไขของคุณถูกส่งไปยัง Admin เรียบร้อยแล้ว', 'success');
+                switchView('main-view');
+            } else {
+                Swal.fire('เกิดข้อผิดพลาด', response.message, 'error');
+            }
+        }
+
+        function deleteRequest(id) {
+            Swal.fire({ title: 'คุณแน่ใจหรือไม่?', text: "คุณจะไม่สามารถกู้คืนข้อมูลนี้ได้!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก' }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'กำลังลบข้อมูล...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+                    const url = `${SCRIPT_URL}?action=deleteRequest&callback=handleSaveResponse&id=${id}`;
+                    jsonpRequest(url);
+                }
+            });
+        }
+        
+        // --- Gemini API Features ---
+        async function generateFollowUpEmail(dentistName, clinicName) {
+            Swal.fire({ title: 'AI กำลังสร้างอีเมล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+            const prompt = `เขียนอีเมลติดตามผลแบบสุภาพและเป็นมืออาชีพเป็นภาษาไทยถึง ทพญ./ทพ. ${dentistName} ที่ ${clinicName} เพื่อสอบถามว่าได้รับตัวอย่างผลิตภัณฑ์แล้วหรือยัง และมีข้อเสนอแนะหรือคำถามเพิ่มเติมหรือไม่ ลงท้ายอีเมลด้วยชื่อ [ชื่อของคุณ], ทีมการตลาด`;
+            try {
+                const responseText = await callGeminiTextAPI(prompt);
+                displayGeneratedEmail(responseText);
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างอีเมลได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง', 'error');
+            }
+        }
+
+        function displayGeneratedEmail(emailText) {
+            if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+            Swal.fire({
+                title: '✨ อีเมลที่สร้างโดย AI',
+                html: `<div id="email-content">${emailText.replace(/\n/g, '<br>')}</div>`,
+                showCancelButton: true,
+                confirmButtonText: 'คัดลอกเนื้อหา',
+                cancelButtonText: 'ปิด',
+                confirmButtonColor: '#8b5cf6',
+                width: '800px',
+                didOpen: () => {
+                    const actions = Swal.getActions();
+                    const ttsButton = document.createElement('button');
+                    ttsButton.id = 'tts-button';
+                    ttsButton.innerText = '🔊 ฟังเสียง';
+                    ttsButton.className = 'swal2-confirm swal2-styled';
+                    ttsButton.style.backgroundColor = '#6366f1';
+                    ttsButton.style.marginLeft = '10px';
+                    ttsButton.onclick = () => playGeneratedAudio(emailText, ttsButton);
+                    actions.appendChild(ttsButton);
+                },
+                preConfirm: () => {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = emailText;
+                    textArea.style.position = "fixed";
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        const confirmButton = Swal.getConfirmButton();
+                        confirmButton.innerText = 'คัดลอกแล้ว!';
+                        setTimeout(() => { confirmButton.innerText = 'คัดลอกเนื้อหา'; }, 2000);
+                    } catch (err) { Swal.showValidationMessage('ไม่สามารถคัดลอกได้'); }
+                    document.body.removeChild(textArea);
+                    return false; 
+                }
+            });
+        }
+        
+        async function getMarketingAnalysis() {
+            if (!statusByMonthChart) {
+                Swal.fire('ข้อผิดพลาด', 'ไม่มีข้อมูลในกราฟที่จะวิเคราะห์', 'error');
+                return;
+            }
+            Swal.fire({ title: 'AI กำลังวิเคราะห์ข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+            
+            const { labels, datasets } = statusByMonthChart.data;
+            let dataSummary = "ข้อมูลสรุปสถานะคำขอรายเดือน:\n";
+            labels.forEach((month, index) => {
+                const sent = datasets[0].data[index];
+                const pending = datasets[1].data[index];
+                if (sent > 0 || pending > 0) {
+                    dataSummary += `- ${month}: ส่งแล้ว ${sent} รายการ, รอดำเนินการ ${pending} รายการ\n`;
+                }
+            });
+
+            const prompt = `ในฐานะนักการตลาดสำหรับห้องปฏิบัติการทันตกรรม จากข้อมูลสรุปสถานะคำขอรายเดือนต่อไปนี้:\n${dataSummary}\nโปรดวิเคราะห์แนวโน้มและให้คำแนะนำทางการตลาดที่นำไปปฏิบัติได้จริง 3 ข้อ เพื่อเพิ่มจำนวนคำขอและปรับปรุงการดำเนินงาน โดยเขียนเป็นภาษาไทย`;
+
+            try {
+                const analysisText = await callGeminiTextAPI(prompt);
+                Swal.fire({
+                    title: '✨ บทวิเคราะห์และข้อเสนอแนะจาก AI',
+                    html: `<div style="text-align: left; white-space: pre-wrap;">${analysisText}</div>`,
+                    width: '800px',
+                });
+            } catch (error) {
+                 console.error("Gemini Analysis Error:", error);
+                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถวิเคราะห์ข้อมูลได้ในขณะนี้', 'error');
+            }
+        }
+
+        async function callGeminiTextAPI(prompt) {
+            const apiKey = ""; // Provided by the environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            const payload = { contents: [{ parts: [{ text: prompt }] }] };
+            const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (!response.ok) throw new Error(`API call failed with status: ${response.status}`);
+            const result = await response.json();
+            if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+                return result.candidates[0].content.parts[0].text;
+            } else {
+                throw new Error('Invalid response structure from Gemini API.');
+            }
+        }
+        
+        async function playGeneratedAudio(text, button) {
+            if (currentAudio && !currentAudio.paused) {
+                currentAudio.pause();
+                button.innerText = '🔊 ฟังเสียง';
+                return;
+            }
+            button.innerText = 'กำลังโหลด...';
+            button.disabled = true;
+            try {
+                const apiKey = ""; // Provided by environment
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+                const payload = {
+                    model: "gemini-2.5-flash-preview-tts",
+                    contents: [{ parts: [{ text: `โปรดอ่านข้อความต่อไปนี้ด้วยน้ำเสียงที่เป็นทางการและชัดเจน: ${text}` }] }],
+                    generationConfig: { responseModalities: ["AUDIO"] }
+                };
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) throw new Error(`TTS API failed with status: ${response.status}`);
+                
+                const result = await response.json();
+                const audioData = result.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+                if (!audioData) throw new Error('No audio data in response.');
+
+                const pcmData = base64ToArrayBuffer(audioData);
+                const pcm16 = new Int16Array(pcmData);
+                const wavBlob = pcmToWav(pcm16, 24000); // Gemini TTS uses 24000Hz sample rate
+                const audioUrl = URL.createObjectURL(wavBlob);
+                
+                currentAudio = new Audio(audioUrl);
+                currentAudio.onplay = () => { button.innerText = '⏸️ หยุดชั่วคราว'; };
+                currentAudio.onpause = () => { button.innerText = '🔊 ฟังเสียง'; };
+                currentAudio.onended = () => { button.innerText = '🔊 ฟังเสียง'; currentAudio = null; };
+                currentAudio.play();
+
+            } catch (error) {
+                console.error("TTS Error:", error);
+                button.innerText = 'เกิดข้อผิดพลาด';
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function pcmToWav(pcmData, sampleRate) {
+            const numChannels = 1;
+            const bitsPerSample = 16;
+            const blockAlign = (numChannels * bitsPerSample) / 8;
+            const byteRate = sampleRate * blockAlign;
+            const dataSize = pcmData.length * (bitsPerSample / 8);
+            const buffer = new ArrayBuffer(44 + dataSize);
+            const view = new DataView(buffer);
+
+            function writeString(view, offset, string) {
+                for (let i = 0; i < string.length; i++) {
+                    view.setUint8(offset + i, string.charCodeAt(i));
+                }
+            }
+
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + dataSize, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, byteRate, true);
+            view.setUint16(32, blockAlign, true);
+            view.setUint16(34, bitsPerSample, true);
+            writeString(view, 36, 'data');
+            view.setUint32(40, dataSize, true);
+
+            for (let i = 0; i < pcmData.length; i++) {
+                view.setInt16(44 + i * 2, pcmData[i], true);
+            }
+
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
+        // --- Dashboard Logic (REVISED) ---
+        function fetchDashboardData() {
+            const url = `${SCRIPT_URL}?action=getDashboardData&callback=renderDashboard`;
+            jsonpRequest(url);
+        }
+
+        function renderDashboard(data) {
+            if (data.error) { console.error("Dashboard Error:", data.error); return; }
+            dashboardData = data.records;
+            populateYearFilter();
+            updateDashboard();
+        }
+
+        function populateYearFilter() {
+            const yearFilter = document.getElementById('yearFilter');
+            const years = [...new Set(dashboardData.map(item => {
+                if (!item.Date) return null;
+                return new Date(item.Date).getFullYear();
+            }).filter(year => year))]; 
+            
+            yearFilter.innerHTML = '<option value="all">ทุกปี</option>';
+            years.sort((a, b) => b - a).forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearFilter.appendChild(option);
+            });
+        }
+
+        function updateDashboard() {
+            const selectedYear = document.getElementById('yearFilter').value;
+            let filteredData = dashboardData;
+            if (selectedYear !== 'all') {
+                filteredData = dashboardData.filter(item => {
+                    if (!item.Date) return false;
+                    return new Date(item.Date).getFullYear() == selectedYear
+                });
+            }
+            updateStatusByMonthChart(filteredData);
+            document.getElementById('analysis-button').disabled = filteredData.length === 0;
+        }
+        
+        function updateStatusByMonthChart(data) {
+            const sentCounts = Array(12).fill(0);
+            const pendingCounts = Array(12).fill(0);
+
+            data.forEach(item => {
+                if (item.Date && item.Status) {
+                    const month = new Date(item.Date).getMonth();
+                    if (item.Status === 'ส่งแล้ว') {
+                        sentCounts[month]++;
+                    } else if (item.Status === 'Pending') {
+                        pendingCounts[month]++;
+                    }
+                }
+            });
+
+            const ctx = document.getElementById('statusByMonthChart').getContext('2d');
+            const chartData = {
+                labels: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'],
+                datasets: [
+                    { label: 'ส่งแล้ว', data: sentCounts, backgroundColor: '#8b5cf6', borderColor: '#7c3aed', borderWidth: 1, borderRadius: 5 },
+                    { label: 'Pending', data: pendingCounts, backgroundColor: '#D1D5DB', borderColor: '#9CA3AF', borderWidth: 1, borderRadius: 5 }
+                ]
+            };
+
+            if (statusByMonthChart) {
+                statusByMonthChart.data = chartData;
+                statusByMonthChart.update();
+            } else {
+                statusByMonthChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+                        plugins: {
+                            legend: { position: 'top' },
+                            title: { display: true, text: `สรุปสถานะคำขอรายเดือน ${document.getElementById('yearFilter').value !== 'all' ? 'ปี ' + document.getElementById('yearFilter').value : ''}` }
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
