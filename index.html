@@ -227,7 +227,6 @@
         let allRequests = [];
         let dashboardData = [];
         let statusByMonthChart;
-        let currentAudio = null;
 
         // --- Core App Logic ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -295,10 +294,6 @@
                 statusByMonthChart.destroy();
                 statusByMonthChart = null;
             }
-            if(currentAudio) {
-                currentAudio.pause();
-                currentAudio = null;
-            }
             showLoggedOutState();
         }
 
@@ -353,7 +348,6 @@
                     actionsHtml += `<button onclick="markAsSent('${req.ID || ''}')" class="text-green-600 hover:text-green-800 font-medium mr-3">ส่งเอกสารแล้ว</button>`;
                 }
                 if (userRole === 'Admin') {
-                    actionsHtml += `<button onclick="generateFollowUpEmail('${req.DentistName || ''}', '${req.ClinicName || ''}')" class="text-purple-600 hover:text-purple-800 font-medium mr-3">✨ สร้างอีเมล</button>`;
                     actionsHtml += `<button onclick="deleteRequest('${req.ID || ''}')" class="text-red-600 hover:text-red-800 font-medium">ลบ</button>`;
                 }
                 let statusText = req.Status || 'Pending';
@@ -489,58 +483,6 @@
         }
         
         // --- Gemini API Features ---
-        async function generateFollowUpEmail(dentistName, clinicName) {
-            Swal.fire({ title: 'AI กำลังสร้างอีเมล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
-            const prompt = `เขียนอีเมลติดตามผลแบบสุภาพและเป็นมืออาชีพเป็นภาษาไทยถึง ทพญ./ทพ. ${dentistName} ที่ ${clinicName} เพื่อสอบถามว่าได้รับตัวอย่างผลิตภัณฑ์แล้วหรือยัง และมีข้อเสนอแนะหรือคำถามเพิ่มเติมหรือไม่ ลงท้ายอีเมลด้วยชื่อ [ชื่อของคุณ], ทีมการตลาด`;
-            try {
-                const responseText = await callGeminiTextAPI(prompt);
-                displayGeneratedEmail(responseText);
-            } catch (error) {
-                console.error("Gemini API Error:", error);
-                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างอีเมลได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง', 'error');
-            }
-        }
-
-        function displayGeneratedEmail(emailText) {
-            if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-            Swal.fire({
-                title: '✨ อีเมลที่สร้างโดย AI',
-                html: `<div id="email-content">${emailText.replace(/\n/g, '<br>')}</div>`,
-                showCancelButton: true,
-                confirmButtonText: 'คัดลอกเนื้อหา',
-                cancelButtonText: 'ปิด',
-                confirmButtonColor: '#8b5cf6',
-                width: '800px',
-                didOpen: () => {
-                    const actions = Swal.getActions();
-                    const ttsButton = document.createElement('button');
-                    ttsButton.id = 'tts-button';
-                    ttsButton.innerText = '🔊 ฟังเสียง';
-                    ttsButton.className = 'swal2-confirm swal2-styled';
-                    ttsButton.style.backgroundColor = '#6366f1';
-                    ttsButton.style.marginLeft = '10px';
-                    ttsButton.onclick = () => playGeneratedAudio(emailText, ttsButton);
-                    actions.appendChild(ttsButton);
-                },
-                preConfirm: () => {
-                    const textArea = document.createElement("textarea");
-                    textArea.value = emailText;
-                    textArea.style.position = "fixed";
-                    document.body.appendChild(textArea);
-                    textArea.focus();
-                    textArea.select();
-                    try {
-                        document.execCommand('copy');
-                        const confirmButton = Swal.getConfirmButton();
-                        confirmButton.innerText = 'คัดลอกแล้ว!';
-                        setTimeout(() => { confirmButton.innerText = 'คัดลอกเนื้อหา'; }, 2000);
-                    } catch (err) { Swal.showValidationMessage('ไม่สามารถคัดลอกได้'); }
-                    document.body.removeChild(textArea);
-                    return false; 
-                }
-            });
-        }
-        
         async function getMarketingAnalysis() {
             if (!statusByMonthChart) {
                 Swal.fire('ข้อผิดพลาด', 'ไม่มีข้อมูลในกราฟที่จะวิเคราะห์', 'error');
@@ -587,94 +529,6 @@
             }
         }
         
-        async function playGeneratedAudio(text, button) {
-            if (currentAudio && !currentAudio.paused) {
-                currentAudio.pause();
-                button.innerText = '🔊 ฟังเสียง';
-                return;
-            }
-            button.innerText = 'กำลังโหลด...';
-            button.disabled = true;
-            try {
-                const apiKey = ""; // Provided by environment
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-                const payload = {
-                    model: "gemini-2.5-flash-preview-tts",
-                    contents: [{ parts: [{ text: `โปรดอ่านข้อความต่อไปนี้ด้วยน้ำเสียงที่เป็นทางการและชัดเจน: ${text}` }] }],
-                    generationConfig: { responseModalities: ["AUDIO"] }
-                };
-                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!response.ok) throw new Error(`TTS API failed with status: ${response.status}`);
-                
-                const result = await response.json();
-                const audioData = result.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-                if (!audioData) throw new Error('No audio data in response.');
-
-                const pcmData = base64ToArrayBuffer(audioData);
-                const pcm16 = new Int16Array(pcmData);
-                const wavBlob = pcmToWav(pcm16, 24000); // Gemini TTS uses 24000Hz sample rate
-                const audioUrl = URL.createObjectURL(wavBlob);
-                
-                currentAudio = new Audio(audioUrl);
-                currentAudio.onplay = () => { button.innerText = '⏸️ หยุดชั่วคราว'; };
-                currentAudio.onpause = () => { button.innerText = '🔊 ฟังเสียง'; };
-                currentAudio.onended = () => { button.innerText = '🔊 ฟังเสียง'; currentAudio = null; };
-                currentAudio.play();
-
-            } catch (error) {
-                console.error("TTS Error:", error);
-                button.innerText = 'เกิดข้อผิดพลาด';
-            } finally {
-                button.disabled = false;
-            }
-        }
-
-        function base64ToArrayBuffer(base64) {
-            const binaryString = window.atob(base64);
-            const len = binaryString.length;
-            const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            return bytes.buffer;
-        }
-
-        function pcmToWav(pcmData, sampleRate) {
-            const numChannels = 1;
-            const bitsPerSample = 16;
-            const blockAlign = (numChannels * bitsPerSample) / 8;
-            const byteRate = sampleRate * blockAlign;
-            const dataSize = pcmData.length * (bitsPerSample / 8);
-            const buffer = new ArrayBuffer(44 + dataSize);
-            const view = new DataView(buffer);
-
-            function writeString(view, offset, string) {
-                for (let i = 0; i < string.length; i++) {
-                    view.setUint8(offset + i, string.charCodeAt(i));
-                }
-            }
-
-            writeString(view, 0, 'RIFF');
-            view.setUint32(4, 36 + dataSize, true);
-            writeString(view, 8, 'WAVE');
-            writeString(view, 12, 'fmt ');
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true);
-            view.setUint16(22, numChannels, true);
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, byteRate, true);
-            view.setUint16(32, blockAlign, true);
-            view.setUint16(34, bitsPerSample, true);
-            writeString(view, 36, 'data');
-            view.setUint32(40, dataSize, true);
-
-            for (let i = 0; i < pcmData.length; i++) {
-                view.setInt16(44 + i * 2, pcmData[i], true);
-            }
-
-            return new Blob([view], { type: 'audio/wav' });
-        }
-
         // --- Dashboard Logic (REVISED) ---
         function fetchDashboardData() {
             const url = `${SCRIPT_URL}?action=getDashboardData&callback=renderDashboard`;
