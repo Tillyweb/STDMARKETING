@@ -333,9 +333,6 @@
                     <button onclick="switchView('main-view')" class="nav-btn active hover:bg-brand-500/10 text-brand-900 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2">
                         <span>📋</span> <span class="hidden sm:inline">หน้าหลัก (ตาราง)</span>
                     </button>
-                    <button onclick="switchView('outreach-view')" class="nav-btn hover:bg-brand-500/10 text-brand-700 hover:text-brand-900 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2">
-                        <span>🎯</span> <span class="hidden sm:inline">การตลาดเชิงรุก (ทักเพจ)</span>
-                    </button>
                     <button onclick="switchView('dashboard-view')" class="nav-btn hover:bg-brand-500/10 text-brand-700 hover:text-brand-900 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2">
                         <span>📊</span> <span class="hidden sm:inline">แดชบอร์ด AI</span>
                     </button>
@@ -423,6 +420,9 @@
                                 <button onclick="showRequestDrawer()" class="flex-1 sm:flex-none flex items-center justify-center bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white font-bold py-3 px-5 rounded-xl text-sm transition-all transform hover:-translate-y-0.5 active:translate-y-0 shadow-md shadow-brand-500/20">
                                     ✨ <span class="ml-2">เพิ่มคลินิกใหม่</span>
                                 </button>
+                                <button onclick="showOutreachDrawer()" class="flex-1 sm:flex-none flex items-center justify-center bg-gradient-to-r from-violet-600 to-brand-500 hover:from-violet-700 hover:to-brand-600 text-white font-bold py-3 px-5 rounded-xl text-sm transition-all transform hover:-translate-y-0.5 active:translate-y-0 shadow-md shadow-brand-500/20">
+                                    💬 <span class="ml-2">ทักคลินิกใหม่</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -478,73 +478,6 @@
                 </div>
             </div>
 
-            <!-- View 4: Proactive Outreach View -->
-            <div id="outreach-view" class="view">
-                <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-sm mb-6">
-                    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-                        <div>
-                            <h2 class="text-2xl font-extrabold text-brand-900 tracking-tight">🎯 การตลาดเชิงรุก (Proactive Social Outreach)</h2>
-                            <p class="text-sm text-gray-500 mt-1">ติดตามประวัติการทักเพจ Facebook คลินิก เพื่อนำเสนอข้อมูลและติดตามผลจนกว่าจะตกลงรับใบราคา</p>
-                        </div>
-                        <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-                            <!-- Search Glass Input -->
-                            <div class="relative flex-grow sm:w-80">
-                                <span class="absolute left-4 top-3.5 text-gray-400">🔍</span>
-                                <input type="text" id="outreachSearchInput" onkeyup="filterOutreachTable()" placeholder="ค้นหาชื่อคลินิก หรือหมายเหตุ..." class="w-full pl-11 pr-4 py-3 rounded-xl glass-input text-sm focus:outline-none">
-                            </div>
-                            
-                            <!-- Action Buttons -->
-                            <div class="flex space-x-2">
-                                <button onclick="fetchData()" class="flex-1 sm:flex-none flex items-center justify-center bg-brand-100 hover:bg-brand-200 text-brand-700 font-bold py-3 px-5 rounded-xl text-sm transition-all transform hover:-translate-y-0.5 active:translate-y-0 shadow-sm border border-brand-200/50">
-                                    🔄 <span class="ml-2">รีเฟรชข้อมูล</span>
-                                </button>
-                                <button onclick="showOutreachDrawer()" class="flex-1 sm:flex-none flex items-center justify-center bg-gradient-to-r from-violet-600 to-brand-500 hover:from-violet-700 hover:to-brand-600 text-white font-bold py-3 px-5 rounded-xl text-sm transition-all transform hover:-translate-y-0.5 active:translate-y-0 shadow-md shadow-brand-500/20">
-                                    💬 <span class="ml-2">ทักคลินิกใหม่</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Outreach Micro Stats Cards -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        <div class="p-4 rounded-2xl bg-brand-50/50 border border-brand-100/50 flex flex-col">
-                            <span class="text-xs text-brand-600 font-bold uppercase tracking-wider">ทักเพจสะสม</span>
-                            <span id="stat-outreach-total" class="text-2xl font-extrabold text-brand-900 font-outfit mt-1">0</span>
-                        </div>
-                        <div class="p-4 rounded-2xl bg-amber-50/50 border border-amber-100/50 flex flex-col">
-                            <span class="text-xs text-amber-700 font-bold uppercase tracking-wider">เงียบ / ไม่ตอบ</span>
-                            <span id="stat-outreach-silent" class="text-2xl font-extrabold text-amber-900 font-outfit mt-1">0</span>
-                        </div>
-                        <div class="p-4 rounded-2xl bg-red-50/50 border border-red-100/50 flex flex-col">
-                            <span class="text-xs text-red-700 font-bold uppercase tracking-wider">ปฏิเสธแล้ว</span>
-                            <span id="stat-outreach-rejected" class="text-2xl font-extrabold text-red-900 font-outfit mt-1">0</span>
-                        </div>
-                        <div class="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100/50 flex flex-col">
-                            <span class="text-xs text-emerald-700 font-bold uppercase tracking-wider">สนใจ / ตอบรับ</span>
-                            <span id="stat-outreach-interested" class="text-2xl font-extrabold text-emerald-900 font-outfit mt-1">0</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Outreach Table -->
-                    <div class="overflow-x-auto rounded-2xl border border-brand-100/50 shadow-inner bg-white/45">
-                        <table class="min-w-full divide-y divide-brand-100/40">
-                            <thead class="bg-brand-50/50">
-                                <tr>
-                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ชื่อคลินิก</th>
-                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ลิงก์เพจเฟซบุ๊ก</th>
-                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">วันที่ติดต่อ</th>
-                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">สถานะการติดตาม</th>
-                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">บันทึกข้อความ / ผลการตอบกลับ</th>
-                                    <th class="py-4 px-6 text-center text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">จัดการการติดตาม</th>
-                                </tr>
-                            </thead>
-                            <tbody id="outreachTableBody" class="divide-y divide-brand-100/20 text-gray-700">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
 
             <!-- View 2: Dashboard View -->
             <div id="dashboard-view" class="view">
@@ -1230,20 +1163,12 @@
             // Add styling matching viewId
             if (viewId === 'main-view' && navButtons[0]) {
                 navButtons[0].classList.add('active', 'bg-brand-500/10', 'text-brand-900');
-            } else if (viewId === 'outreach-view' && navButtons[1]) {
+            } else if (viewId === 'dashboard-view' && navButtons[1]) {
                 navButtons[1].classList.add('active', 'bg-brand-500/10', 'text-brand-900');
-            } else if (viewId === 'dashboard-view' && navButtons[2]) {
-                navButtons[2].classList.add('active', 'bg-brand-500/10', 'text-brand-900');
             }
 
             // Sync rendering and fetch data in the background on tab switch
-            if (viewId === 'outreach-view') {
-                renderOutreachTable(allRequests);
-                if (!isDemoMode) {
-                    const url = `${SCRIPT_URL}?action=getRequests&callback=displayData`;
-                    jsonpRequest(url);
-                }
-            } else if (viewId === 'main-view') {
+            if (viewId === 'main-view') {
                 renderTable(allRequests);
                 if (!isDemoMode) {
                     const url = `${SCRIPT_URL}?action=getRequests&callback=displayData`;
@@ -1441,13 +1366,7 @@
             const userRole = localStorage.getItem('userRole');
             tableBody.innerHTML = '';
 
-            // Filter out proactive outreach leads from the physical mailing list
-            const deliveryRequests = requests.filter(req => {
-                const statusText = req.Status || 'Pending';
-                return !statusText.startsWith('ทักแล้ว') && !statusText.includes('ทักแล้ว');
-            });
-
-            if (!deliveryRequests || deliveryRequests.length === 0) {
+            if (!requests || requests.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="6" class="text-center py-10 text-gray-400 font-medium">
@@ -1457,7 +1376,7 @@
                 return;
             }
 
-            deliveryRequests.forEach(req => {
+            requests.forEach(req => {
                 const tr = document.createElement('tr');
                 tr.className = 'border-b border-brand-100/10 hover:bg-brand-50/30 transition-colors duration-250';
                 
@@ -1468,22 +1387,39 @@
                     statusColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
                 } else if (statusText === 'ส่งแล้ว') {
                     statusColor = 'bg-indigo-100 text-indigo-800 border-indigo-200';
+                } else if (statusText.includes('เงียบ')) {
+                    statusColor = 'bg-gray-100 text-gray-600 border-gray-200';
+                } else if (statusText.includes('ปฏิเสธ')) {
+                    statusColor = 'bg-red-100 text-red-700 border-red-200';
+                } else if (statusText.includes('สนใจ')) {
+                    statusColor = 'bg-pink-100 text-pink-700 border-pink-200';
                 }
 
                 // Compile role-based action buttons
-                let actionsHtml = `
-                    <button onclick="goToPrintView('${req.ID || ''}')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 py-1.5 px-3 rounded-lg text-xs font-bold transition-all mr-2">
-                        🖨️ พิมพ์
-                    </button>
-                    <button onclick="editRequest('${req.ID || ''}')" class="bg-brand-100 hover:bg-brand-200 text-brand-700 hover:text-brand-900 py-1.5 px-3 rounded-lg text-xs font-bold transition-all mr-2">
-                        ✏️ แก้ไข
-                    </button>`;
-                
-                if (statusText === 'Pending') {
-                    actionsHtml += `
-                        <button onclick="markAsSent('${req.ID || ''}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-900 py-1.5 px-3 rounded-lg text-xs font-bold transition-all mr-2 border border-emerald-200/50">
-                            ✓ ส่งแล้ว
+                let actionsHtml = '';
+                if (statusText.startsWith('ทักแล้ว') || statusText.includes('ทักแล้ว')) {
+                    actionsHtml = `
+                        <button onclick="editOutreachLead('${req.ID || ''}')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 py-1.5 px-3 rounded-lg text-xs font-bold transition-all mr-2">
+                            ✏️ อัปเดตติดตาม
+                        </button>
+                        <button onclick="convertToDelivery('${req.ID || ''}')" class="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white py-1.5 px-3 rounded-lg text-xs font-bold transition-all mr-2 shadow-sm">
+                            📦 จัดส่งซอง
                         </button>`;
+                } else {
+                    actionsHtml = `
+                        <button onclick="goToPrintView('${req.ID || ''}')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 py-1.5 px-3 rounded-lg text-xs font-bold transition-all mr-2">
+                            🖨️ พิมพ์
+                        </button>
+                        <button onclick="editRequest('${req.ID || ''}')" class="bg-brand-100 hover:bg-brand-200 text-brand-700 hover:text-brand-900 py-1.5 px-3 rounded-lg text-xs font-bold transition-all mr-2">
+                            ✏️ แก้ไข
+                        </button>`;
+                    
+                    if (statusText === 'Pending') {
+                        actionsHtml += `
+                            <button onclick="markAsSent('${req.ID || ''}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-900 py-1.5 px-3 rounded-lg text-xs font-bold transition-all mr-2 border border-emerald-200/50">
+                                ✓ ส่งแล้ว
+                            </button>`;
+                    }
                 }
                 
                 if (userRole === 'Admin') {
@@ -1493,10 +1429,18 @@
                         </button>`;
                 }
 
+                // If address is a Facebook link or URL, render as clickable link
+                let addressHtml = req.Address || '';
+                if (addressHtml.startsWith('http') || addressHtml.includes('facebook.com')) {
+                    addressHtml = `<a href="${addressHtml}" target="_blank" class="text-brand-600 hover:text-brand-800 underline inline-flex items-center space-x-1 font-semibold" title="${addressHtml}">
+                        <span>🔗</span> <span class="max-w-[150px] truncate">เปิดเพจคลินิก</span>
+                    </a>`;
+                }
+
                 tr.innerHTML = `
                     <td class="py-4 px-6 text-sm font-bold text-gray-850">${req.DentistName || ''}</td>
                     <td class="py-4 px-6 text-sm text-gray-600 font-medium">${req.ClinicName || ''}</td>
-                    <td class="py-4 px-6 text-xs text-gray-500 max-w-xs truncate" title="${req.Address || ''}">${req.Address || ''}</td>
+                    <td class="py-4 px-6 text-xs text-gray-500 max-w-xs truncate" title="${req.Address || ''}">${addressHtml}</td>
                     <td class="py-4 px-6 text-sm text-gray-500 font-outfit">${req.PhoneNumber || ''}</td>
                     <td class="py-4 px-6 text-xs">
                         <span class="px-2.5 py-1 inline-flex leading-5 font-bold rounded-full border ${statusColor}">
