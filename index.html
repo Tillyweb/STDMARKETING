@@ -434,6 +434,7 @@
                                 <tr>
                                     <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ชื่อทันตแพทย์</th>
                                     <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ชื่อคลินิก</th>
+                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ลิ้งเพจ</th>
                                     <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ที่อยู่การจัดส่งซอง</th>
                                     <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">เบอร์โทรศัพท์</th>
                                     <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">สถานะคำขอ</th>
@@ -446,6 +447,7 @@
                                 <tr>
                                     <td class="py-5 px-6"><div class="h-5 w-32 skeleton rounded-md"></div></td>
                                     <td class="py-5 px-6"><div class="h-5 w-44 skeleton rounded-md"></div></td>
+                                    <td class="py-5 px-6"><div class="h-5 w-28 skeleton rounded-md"></div></td>
                                     <td class="py-5 px-6"><div class="h-5 w-72 skeleton rounded-md"></div></td>
                                     <td class="py-5 px-6"><div class="h-5 w-24 skeleton rounded-md"></div></td>
                                     <td class="py-5 px-6"><div class="h-6 w-16 skeleton rounded-full"></div></td>
@@ -454,6 +456,7 @@
                                 <tr>
                                     <td class="py-5 px-6"><div class="h-5 w-28 skeleton rounded-md"></div></td>
                                     <td class="py-5 px-6"><div class="h-5 w-36 skeleton rounded-md"></div></td>
+                                    <td class="py-5 px-6"><div class="h-5 w-24 skeleton rounded-md"></div></td>
                                     <td class="py-5 px-6"><div class="h-5 w-60 skeleton rounded-md"></div></td>
                                     <td class="py-5 px-6"><div class="h-5 w-28 skeleton rounded-md"></div></td>
                                     <td class="py-5 px-6"><div class="h-6 w-16 skeleton rounded-full"></div></td>
@@ -462,6 +465,7 @@
                                 <tr>
                                     <td class="py-5 px-6"><div class="h-5 w-36 skeleton rounded-md"></div></td>
                                     <td class="py-5 px-6"><div class="h-5 w-40 skeleton rounded-md"></div></td>
+                                    <td class="py-5 px-6"><div class="h-5 w-24 skeleton rounded-md"></div></td>
                                     <td class="py-5 px-6"><div class="h-5 w-80 skeleton rounded-md"></div></td>
                                     <td class="py-5 px-6"><div class="h-5 w-20 skeleton rounded-md"></div></td>
                                     <td class="py-5 px-6"><div class="h-6 w-16 skeleton rounded-full"></div></td>
@@ -854,6 +858,11 @@
             <div class="space-y-1">
                 <label for="clinicName" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">ชื่อคลินิก / โรงพยาบาล <span class="text-red-500">*</span></label>
                 <input type="text" id="clinicName" required placeholder="ตัวอย่าง: คลินิกทันตกรรมสมดุลยิ้ม" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none">
+            </div>
+            
+            <div class="space-y-1">
+                <label for="pageLink" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">ลิ้งเพจ Facebook / เว็บไซต์คลินิก</label>
+                <input type="url" id="pageLink" placeholder="ตัวอย่าง: https://www.facebook.com/clinicpage" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none">
             </div>
             
             <div class="space-y-1">
@@ -1369,7 +1378,7 @@
             if (!requests || requests.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="6" class="text-center py-10 text-gray-400 font-medium">
+                        <td colspan="7" class="text-center py-10 text-gray-400 font-medium">
                             <span class="text-4xl block mb-2">📁</span> ไม่พบข้อมูลคลินิกทันตกรรมในคิวจัดส่ง
                         </td>
                     </tr>`;
@@ -1429,6 +1438,17 @@
                         </button>`;
                 }
 
+                // Render PageLink as clickable link
+                let pageLinkHtml = '';
+                const rawPageLink = req.PageLink || '';
+                if (rawPageLink && (rawPageLink.startsWith('http') || rawPageLink.includes('facebook.com'))) {
+                    pageLinkHtml = `<a href="${rawPageLink}" target="_blank" class="text-brand-600 hover:text-brand-800 underline inline-flex items-center space-x-1 font-semibold" title="${rawPageLink}">
+                        <span>🔗</span> <span class="max-w-[120px] truncate">เปิดเพจ</span>
+                    </a>`;
+                } else if (rawPageLink) {
+                    pageLinkHtml = `<span class="text-gray-500">${rawPageLink}</span>`;
+                }
+
                 // If address is a Facebook link or URL, render as clickable link
                 let addressHtml = req.Address || '';
                 if (addressHtml.startsWith('http') || addressHtml.includes('facebook.com')) {
@@ -1440,6 +1460,7 @@
                 tr.innerHTML = `
                     <td class="py-4 px-6 text-sm font-bold text-gray-850">${req.DentistName || ''}</td>
                     <td class="py-4 px-6 text-sm text-gray-600 font-medium">${req.ClinicName || ''}</td>
+                    <td class="py-4 px-6 text-xs text-gray-500 max-w-[160px]">${pageLinkHtml || '<span class="text-gray-300">-</span>'}</td>
                     <td class="py-4 px-6 text-xs text-gray-500 max-w-xs truncate" title="${req.Address || ''}">${addressHtml}</td>
                     <td class="py-4 px-6 text-sm text-gray-500 font-outfit">${req.PhoneNumber || ''}</td>
                     <td class="py-4 px-6 text-xs">
@@ -1511,12 +1532,14 @@
             document.getElementById('recordId').value = record.ID;
             document.getElementById('dentistName').value = record.DentistName || '';
             document.getElementById('clinicName').value = record.ClinicName || '';
+            document.getElementById('pageLink').value = record.PageLink || '';
             document.getElementById('address').value = record.Address || '';
             document.getElementById('phoneNumber').value = record.PhoneNumber || '';
             document.getElementById('servicePrice').value = record.Price !== undefined ? record.Price : '';
             document.getElementById('originalData').value = JSON.stringify({
                 DentistName: record.DentistName,
                 ClinicName: record.ClinicName,
+                PageLink: record.PageLink,
                 Address: record.Address,
                 PhoneNumber: record.PhoneNumber,
                 Price: record.Price
@@ -1548,6 +1571,7 @@
                 ID: recordId,
                 DentistName: document.getElementById('dentistName').value,
                 ClinicName: document.getElementById('clinicName').value,
+                PageLink: document.getElementById('pageLink').value,
                 Address: document.getElementById('address').value,
                 PhoneNumber: document.getElementById('phoneNumber').value,
                 Price: !isNaN(priceVal) ? priceVal : 100,
@@ -2302,13 +2326,15 @@
             document.getElementById('recordId').value = record.ID;
             document.getElementById('dentistName').value = '';
             document.getElementById('clinicName').value = record.ClinicName || '';
-            document.getElementById('address').value = `เพจคลินิก: ${record.Address || ''}\nที่อยู่จัดส่ง: `;
+            document.getElementById('pageLink').value = record.PageLink || record.Address || '';
+            document.getElementById('address').value = '';
             document.getElementById('phoneNumber').value = '';
             document.getElementById('servicePrice').value = '100';
             
             document.getElementById('originalData').value = JSON.stringify({
                 DentistName: '-',
                 ClinicName: record.ClinicName,
+                PageLink: record.PageLink || record.Address,
                 Address: record.Address,
                 PhoneNumber: '-',
                 Price: 0,
