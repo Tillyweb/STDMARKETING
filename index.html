@@ -401,7 +401,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                         <div>
                             <h2 class="text-2xl font-extrabold text-brand-900 tracking-tight">รายชื่อคลินิกและงานบริการ</h2>
-                            <p class="text-sm text-gray-500 mt-1">ค้นหา ตรวจสอบข้อมูล จัดเตรียมเอกสารการขนส่ง</p>
+                            <p class="text-sm text-gray-500 mt-1">ค้นหา ตรวจสอบข้อมูล จัดเตรียมเอกสารการแนะนำตัวการตลาด</p>
                         </div>
                         <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
                             <!-- Search Glass Input -->
@@ -429,7 +429,7 @@
                                 <tr>
                                     <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ชื่อทันตแพทย์</th>
                                     <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ชื่อคลินิก</th>
-                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ที่อยู่การจัดส่ง</th>
+                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ที่อยู่การจัดส่งซอง</th>
                                     <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">เบอร์โทรศัพท์</th>
                                     <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">สถานะคำขอ</th>
                                     <th class="py-4 px-6 text-center text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">จัดการรายการ</th>
@@ -501,7 +501,7 @@
                                     </select>
                                 </div>
                                 <div class="p-4 rounded-xl bg-brand-50 border border-brand-100/70 text-xs text-brand-700 leading-relaxed shadow-inner">
-                                    💡 <b>คำแนะนำ:</b> ใช้กราฟแท่งเปรียบเทียบการดำเนินการเพื่อปรับแผนกลยุทธ์ของฝ่ายพัฒนาผลิตภัณฑ์และขนส่งรายไตรมาส
+                                    💡 <b>คำแนะนำ:</b> ใช้กราฟแท่งเปรียบเทียบการดำเนินการเพื่อปรับแผนกลยุทธ์ของฝ่ายพัฒนาผลิตภัณฑ์และส่งซองเอกสารการตลาด
                                 </div>
                             </div>
                         </div>
@@ -509,7 +509,7 @@
                         <!-- Chart Display Card -->
                         <div class="lg:col-span-3 glass-panel p-6 rounded-2xl border border-brand-100/40 flex flex-col">
                             <h3 class="text-brand-900 font-extrabold mb-4 flex items-center space-x-2 text-md border-b border-brand-100 pb-3">
-                                <span>📈</span> <span>สรุปสถานะคำขอจัดทำครอบฟันและสะพานฟันจัดส่งรายเดือน</span>
+                                <span>📈</span> <span>สรุปสถานะการส่งซองเอกสารเปิดการตลาดแนะนำแลปรายเดือน</span>
                             </h3>
                             <div class="relative flex-grow min-h-[300px] w-full flex items-center justify-center">
                                 <canvas id="statusByMonthChart" class="w-full"></canvas>
@@ -519,13 +519,13 @@
                 </div>
             </div>
 
-            <!-- View 3: Print Delivery Note View -->
+            <!-- View 3: Print Mailing Label Cover Slip View -->
             <div id="print-view" class="view">
                 <div class="max-w-2xl mx-auto bg-white p-8 sm:p-12 rounded-3xl shadow-xl border border-gray-150 relative">
                     
                     <!-- Physical stamp decoration for premium print aesthetic -->
-                    <div class="absolute top-10 right-10 w-24 h-24 border-4 border-emerald-500/20 rounded-full flex items-center justify-center text-[10px] text-emerald-500/30 uppercase font-bold tracking-widest rotate-12 select-none pointer-events-none">
-                        S.T.D. Verified
+                    <div class="absolute top-10 right-10 w-28 h-28 border-4 border-brand-500/20 rounded-full flex items-center justify-center text-[10px] text-brand-500/30 uppercase font-bold tracking-widest rotate-12 select-none pointer-events-none">
+                        S.T.D. MARKETING
                     </div>
                     
                     <!-- Printed Slip Layout -->
@@ -533,50 +533,60 @@
                         <!-- Sender Header Details -->
                         <div class="flex justify-between items-start border-b-4 border-brand-900 pb-6 mb-8">
                             <div>
-                                <h2 class="text-2xl font-extrabold text-brand-900 tracking-tight">ห.จ.ก S.T.D. DENTALLAB จำกัด</h2>
-                                <p class="text-xs text-gray-500 mt-1">123/45 ถนนนวลจันทร์ แขวงคลองกุ่ม เขตบึงกุ่ม กรุงเทพมหานคร 10230</p>
-                                <p class="text-xs text-gray-500">โทร: 02-555-9876 | อีเมล: support@stddentallab.com</p>
+                                <h2 class="text-xl font-extrabold text-brand-900 tracking-tight">ห้างหุ้นส่วนจำกัด เอส.ที.ดี.เด็นตอล แลป (จ.เชียงใหม่)</h2>
+                                <p class="text-xs text-gray-500 mt-1.5 font-bold">📍 สำนักงาน: ต.สันปูเลย อ.ดอยสะเก็ด จ.เชียงใหม่ (ใกล้แยกแม่กวง)</p>
+                                <p class="text-[11px] text-gray-500 mt-0.5">ผู้ผลิตและจำหน่ายเครื่องมือทางทันตกรรมแก่คลินิกและโรงพยาบาลทั่วประเทศ</p>
                             </div>
                             <div class="text-right">
-                                <span class="px-3 py-1 bg-brand-900 text-white rounded-md text-xs font-bold tracking-wider uppercase">ใบส่งสินค้า / Delivery Voucher</span>
-                                <p class="text-xs text-gray-500 mt-2">เอกสารสำหรับการควบคุมงานขนส่ง</p>
+                                <span class="px-3 py-1 bg-brand-900 text-white rounded-md text-xs font-bold tracking-wider uppercase font-outfit">เอกสารแนะนำบริการ / MARKETING KIT</span>
+                                <p class="text-[10px] text-gray-400 mt-2">ซองเอกสารเปิดการตลาดและใบเสนอราคา</p>
                             </div>
                         </div>
 
-                        <!-- Grid details info -->
-                        <div class="grid grid-cols-2 gap-6 bg-brand-50/50 p-6 rounded-2xl border border-brand-100/50 mb-8 text-sm">
-                            <div class="space-y-2">
-                                <div class="flex">
-                                    <span class="w-1/3 text-gray-500 font-medium">ผู้รับบริการ:</span>
-                                    <span id="print-dentist-name" class="w-2/3 font-bold text-gray-800"></span>
-                                </div>
-                                <div class="flex">
-                                    <span class="w-1/3 text-gray-500 font-medium">คลินิก:</span>
-                                    <span id="print-clinic-name" class="w-2/3 font-bold text-gray-850"></span>
-                                </div>
-                                <div class="flex">
-                                    <span class="w-1/3 text-gray-500 font-medium">เบอร์โทร:</span>
-                                    <span id="print-phone" class="w-2/3 text-gray-700"></span>
-                                </div>
+                        <!-- Envelope Address Grid -->
+                        <div class="border-2 border-brand-200/50 p-6 rounded-2xl bg-brand-50/30 mb-8 text-sm relative overflow-hidden">
+                            <div class="absolute top-0 right-0 px-3 py-1 bg-brand-200 text-brand-800 text-[10px] font-bold uppercase rounded-bl-lg font-outfit">
+                                TO / ผู้รับ
                             </div>
-                            <div class="space-y-2 border-l border-brand-100 pl-6">
-                                <div class="flex">
-                                    <span class="w-1/3 text-gray-500 font-medium">ที่อยู่จัดส่ง:</span>
-                                    <span id="print-address" class="w-2/3 text-gray-700 leading-tight"></span>
+                            <h3 class="text-brand-900 font-extrabold text-md mb-4 flex items-center">
+                                <span class="text-lg mr-2">📬</span> ถึง คุณหมอ/คลินิกทันตกรรมผู้รับบริการ
+                            </h3>
+                            <div class="space-y-3 pl-2">
+                                <div class="flex items-start">
+                                    <span class="w-1/4 text-gray-400 font-bold text-xs uppercase tracking-wider mt-0.5">ผู้รับบริการ:</span>
+                                    <span id="print-dentist-name" class="w-3/4 font-extrabold text-gray-800 text-md"></span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="w-1/4 text-gray-400 font-bold text-xs uppercase tracking-wider mt-0.5">คลินิก:</span>
+                                    <span id="print-clinic-name" class="w-3/4 font-extrabold text-brand-700 text-md"></span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="w-1/4 text-gray-400 font-bold text-xs uppercase tracking-wider mt-0.5">เบอร์โทร:</span>
+                                    <span id="print-phone" class="w-3/4 text-gray-700 font-semibold font-outfit"></span>
+                                </div>
+                                <div class="flex items-start border-t border-brand-100/50 pt-3 mt-3">
+                                    <span class="w-1/4 text-gray-400 font-bold text-xs uppercase tracking-wider mt-0.5">ที่อยู่จัดส่งซอง:</span>
+                                    <span id="print-address" class="w-3/4 text-gray-700 font-bold text-sm leading-relaxed"></span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Voucher Terms details & barcode mockup -->
-                        <div class="border-t border-b border-gray-200 py-6 mb-8 flex flex-col md:flex-row justify-between items-center gap-6">
-                            <div class="text-xs text-gray-500 space-y-1 max-w-md">
-                                <p class="font-bold text-gray-700">⚠️ ข้อกำหนดการจัดส่ง:</p>
-                                <p>1. โปรดตรวจสอบสภาพสินค้าภายนอกทันทีเมื่อได้รับก่อนลงนามรับของ</p>
-                                <p>2. ในกรณีครอบฟันเสียหายระหว่างการจัดส่ง โปรดส่งงานซ่อมกลับคืนใน 3 วัน</p>
+                        <!-- Hiring & Marketing Invitation Card -->
+                        <div class="border border-brand-200/50 bg-brand-50/15 p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-6">
+                            <div class="space-y-2 max-w-md">
+                                <h4 class="font-extrabold text-brand-950 text-sm flex items-center">
+                                    <span class="mr-2">📢</span> ร่วมเติบโตไปพร้อมกับพวกเรา!
+                                </h4>
+                                <p class="text-xs text-gray-500 leading-relaxed">
+                                    เอส.ที.ดี.เด็นตอล แลป เป็นแลปทันตกรรมผู้ผลิตเครื่องมือทางทันตกรรมแก่คลินิกและโรงพยาบาลทั่วประเทศ ขณะนี้<b>ได้เปิดรับสมัครพนักงานรุ่นใหม่ไฟแรง</b> ที่พร้อมจะเติบโตและก้าวหน้าไปด้วยกันในสากลเทคโนโลยีดิจิทัลแลป!
+                                </p>
+                                <p class="text-[10px] text-brand-600 font-semibold">
+                                    📍 พิกัดสำนักงาน: ใกล้แยกแม่กวง ต.สันปูเลย อ.ดอยสะเก็ด จ.เชียงใหม่
+                                </p>
                             </div>
                             
-                            <!-- Mock Barcode for authentic delivery voucher feel -->
-                            <div class="flex flex-col items-center select-none">
+                            <!-- Mock Barcode for authentic envelope feel -->
+                            <div class="flex flex-col items-center select-none shrink-0 border-l border-brand-200/50 pl-6">
                                 <div class="flex items-center space-x-[1.5px] h-10 px-2 bg-white">
                                     <div class="w-[1px] h-full bg-black"></div>
                                     <div class="w-[2px] h-full bg-black"></div>
@@ -591,19 +601,7 @@
                                     <div class="w-[2px] h-full bg-black"></div>
                                     <div class="w-[1px] h-full bg-black"></div>
                                 </div>
-                                <span class="text-[9px] font-mono tracking-widest text-gray-500 mt-1 uppercase">VOUCHER-98756A</span>
-                            </div>
-                        </div>
-
-                        <!-- Signature block line -->
-                        <div class="grid grid-cols-2 gap-12 pt-8 text-center text-sm">
-                            <div class="flex flex-col items-center">
-                                <div class="w-full max-w-[200px] border-b border-gray-300 h-8"></div>
-                                <span class="text-xs text-gray-500 mt-2">ผู้ส่งของ / Dispatcher Signature</span>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <div class="w-full max-w-[200px] border-b border-gray-300 h-8"></div>
-                                <span class="text-xs text-gray-500 mt-2">ผู้รับของ (แพทย์/ผู้ช่วยแพทย์) / Receiver</span>
+                                <span class="text-[9px] font-mono tracking-widest text-gray-500 mt-1 uppercase">MARKETING-KIT</span>
                             </div>
                         </div>
                     </div>
@@ -614,7 +612,7 @@
                             🔙 กลับหน้าหลัก
                         </button>
                         <button onclick="window.print()" class="bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white font-bold py-3 px-6 rounded-xl text-sm transition-all shadow-md shadow-brand-500/20">
-                            🖨️ สั่งพิมพ์ใบปะหน้า
+                            🖨️ สั่งพิมพ์ใบปะหน้าซอง
                         </button>
                     </div>
                 </div>
@@ -626,7 +624,7 @@
 
     <!-- Footer standard meta -->
     <footer class="no-print mt-auto py-6 border-t border-brand-100/30 text-center text-xs text-brand-600/60 font-medium">
-        ห.จ.ก S.T.D. DENTALLAB จำกัด © 2026. All Rights Reserved. Designed under Advanced Agentic Paradigm.
+        ห้างหุ้นส่วนจำกัด เอส.ที.ดี.เด็นตอล แลป (จ.เชียงใหม่) © 2026. All Rights Reserved. Designed under Advanced Agentic Paradigm.
     </footer>
 
     <!-- ================== sliding settings drawer panel ================== -->
@@ -683,7 +681,7 @@
             </div>
             
             <div class="space-y-1">
-                <label for="address" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">ที่อยู่ในการส่งงาน / ใบกำกับ <span class="text-red-500">*</span></label>
+                <label for="address" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">ที่อยู่ในการส่งซองเอกสารการตลาด <span class="text-red-500">*</span></label>
                 <textarea id="address" required rows="3" placeholder="ตัวอย่าง: 456 ถนนลาดพร้าว ซอย 34 แขวงจอมพล เขตจตุจักร กรุงเทพฯ 10900" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none resize-none"></textarea>
             </div>
             
