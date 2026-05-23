@@ -1388,17 +1388,28 @@
                 const pendingUpdate = window.pendingOutreachStatusUpdate;
                 const statusToSet = pendingUpdate.Status;
                 
-                const matchedRecord = allRequests.find(r => 
+                // Scenario A: Check if the record already exists with the correct target status (saved directly by server)
+                const alreadyCorrectRecord = allRequests.find(r => 
                     r.ClinicName === pendingUpdate.ClinicName && 
-                    (r.Status === 'Pending' || !r.Status || r.Status === '')
+                    r.Status === statusToSet
                 );
                 
-                if (matchedRecord && matchedRecord.ID) {
-                    window.pendingOutreachStatusUpdate = null; // Clear it to prevent infinite loop
+                if (alreadyCorrectRecord) {
+                    window.pendingOutreachStatusUpdate = null; // Clear the pending intercept
+                } else {
+                    // Scenario B: Otherwise, find the record with Status 'Pending' to correct it
+                    const matchedRecord = allRequests.find(r => 
+                        r.ClinicName === pendingUpdate.ClinicName && 
+                        (r.Status === 'Pending' || !r.Status || r.Status === '')
+                    );
                     
-                    const updateUrl = `${SCRIPT_URL}?action=updateStatus&callback=handleOutreachStatusResponse&id=${matchedRecord.ID}&status=${encodeURIComponent(statusToSet)}`;
-                    jsonpRequest(updateUrl);
-                    return; 
+                    if (matchedRecord && matchedRecord.ID) {
+                        window.pendingOutreachStatusUpdate = null; // Clear it to prevent infinite loop
+                        
+                        const updateUrl = `${SCRIPT_URL}?action=updateStatus&callback=handleOutreachStatusResponse&id=${matchedRecord.ID}&status=${encodeURIComponent(statusToSet)}`;
+                        jsonpRequest(updateUrl);
+                        return; 
+                    }
                 }
             }
             
@@ -1652,6 +1663,14 @@
                     timer: 2000,
                     showConfirmButton: false
                 });
+
+                if (isDemoMode) {
+                    renderTable(allRequests);
+                    renderOutreachTable(allRequests);
+                    updateDashboard();
+                    return;
+                }
+
                 fetchData();
                 fetchDashboardData();
             } else {
@@ -1668,6 +1687,14 @@
                 timer: 2000,
                 showConfirmButton: false
             });
+
+            if (isDemoMode) {
+                renderTable(allRequests);
+                renderOutreachTable(allRequests);
+                updateDashboard();
+                return;
+            }
+
             fetchData();
             fetchDashboardData();
         }
