@@ -935,7 +935,7 @@
                 </div>
                 <div class="space-y-1">
                     <label for="servicePrice" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">ราคาชุดบริการ/งบประมาณ (บาท)</label>
-                    <input type="number" id="servicePrice" min="0" placeholder="ว่างไว้จะเท่ากับ 150 บาท" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none">
+                    <input type="number" id="servicePrice" min="0" placeholder="ว่างไว้จะเท่ากับ 100 บาท" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none">
                 </div>
             </div>
             
@@ -1319,13 +1319,13 @@
             
             // Rich mock lists containing both physical shipments and proactive social outreach leads
             allRequests = [
-                { ID: "DEMO-001", DentistName: "ทพ.สมชาย ยินดี", ClinicName: "คลินิกทันตกรรมรักยิ้ม ลาดพร้าว", Address: "123 ถนนลาดพร้าว ซอย 12 แขวงจอมพล เขตจตุจักร กรุงเทพฯ 10900", PhoneNumber: "0812345678", Status: "ส่งแล้ว", Date: "2026-05-10", Price: 150, Notes: "ทักไปเสนอชุดการตลาด" },
+                { ID: "DEMO-001", DentistName: "ทพ.สมชาย ยินดี", ClinicName: "คลินิกทันตกรรมรักยิ้ม ลาดพร้าว", Address: "123 ถนนลาดพร้าว ซอย 12 แขวงจอมพล เขตจตุจักร กรุงเทพฯ 10900", PhoneNumber: "0812345678", Status: "ส่งแล้ว", Date: "2026-05-10", Price: 100, Notes: "ทักไปเสนอชุดการตลาด" },
                 { ID: "DEMO-002", DentistName: "ทพญ. รัชนี ทิพวรรณ", ClinicName: "คลินิกทันตกรรมสมดุลยิ้ม สุขุมวิท", Address: "456 ถนนสุขุมวิท ซอย 24 แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110", PhoneNumber: "0898765432", Status: "Pending", Date: "2026-05-15", Price: 250, Notes: "รอหมอตรวจทานที่อยู่" },
                 { ID: "DEMO-003", DentistName: "ทพ. อนันต์ รักษ์ฟัน", ClinicName: "โรงพยาบาลฟันดีเดนทัล พหลโยธิน", Address: "789 ถนนพหลโยธิน แขวงสามเสนใน เขตพญาไท กรุงเทพฯ 10400", PhoneNumber: "0865551234", Status: "Approved", Date: "2026-05-20", Price: 500, Notes: "ตอบรับเรียบร้อย ส่งเคสแลปชุดแรกแล้ว" },
                 { ID: "DEMO-004", DentistName: "-", ClinicName: "คลินิกสไมล์เดนทัล อารีย์", Address: "https://www.facebook.com/smiledental.ari", PhoneNumber: "-", Status: "ทักแล้ว - เงียบ", Date: "2026-05-22", Price: 0, Notes: "ส่งแชทแผ่นพับแลปแล้ว อ่านแล้วเงียบ" },
                 { ID: "DEMO-005", DentistName: "-", ClinicName: "คลินิกทันตแพทย์สุชาติ เชียงใหม่", Address: "https://www.facebook.com/suchartdental", PhoneNumber: "-", Status: "ทักแล้ว - ปฏิเสธ", Date: "2026-05-18", Price: 0, Notes: "ปฏิเสธแจ้งว่ามีแลปประจำอยู่แล้ว" },
-                { ID: "DEMO-006", DentistName: "-", ClinicName: "คลินิกฟันสวย ลำพูน", Address: "https://www.facebook.com/fansuay.lamphun", PhoneNumber: "-", Status: "ทักแล้ว - สนใจ", Date: "2026-05-23", Price: 150, Notes: "สนใจแผ่นพับและใบเสนอราคา ขอให้ส่งซอง" },
-                { ID: "DEMO-007", DentistName: "ทพญ. สุดา ศรีเดนทัล", ClinicName: "เดนทัลแคร์คลินิก เชียงใหม่", Address: "101 ถนนรามคำแหง แขวงหัวหมาก เขตบางกะปิ กรุงเทพฯ 10240", PhoneNumber: "0823334444", Status: "ส่งแล้ว", Date: "2026-05-05", Price: 150, Notes: "จัดส่งซองข้อมูลเรียบร้อย" },
+                { ID: "DEMO-006", DentistName: "-", ClinicName: "คลินิกฟันสวย ลำพูน", Address: "https://www.facebook.com/fansuay.lamphun", PhoneNumber: "-", Status: "ทักแล้ว - สนใจ", Date: "2026-05-23", Price: 100, Notes: "สนใจแผ่นพับและใบเสนอราคา ขอให้ส่งซอง" },
+                { ID: "DEMO-007", DentistName: "ทพญ. สุดา ศรีเดนทัล", ClinicName: "เดนทัลแคร์คลินิก เชียงใหม่", Address: "101 ถนนรามคำแหง แขวงหัวหมาก เขตบางกะปิ กรุงเทพฯ 10240", PhoneNumber: "0823334444", Status: "ส่งแล้ว", Date: "2026-05-05", Price: 100, Notes: "จัดส่งซองข้อมูลเรียบร้อย" },
                 { ID: "DEMO-008", DentistName: "ทพ. วิชัย มุ่งมั่น", ClinicName: "คลินิกทันตแพทย์วิชัย", Address: "55 ถนนเพชรบุรี แขวงมักกะสัน เขตราชเทวี กรุงเทพฯ 10400", PhoneNumber: "0819990000", Status: "Approved", Date: "2026-04-12", Price: 300, Notes: "ตกลงยอมรับใบเสนอราคาและเปิดรับบริการแลป" }
             ];
             
@@ -1381,6 +1381,28 @@
             localStorage.setItem('allRequests', JSON.stringify(allRequests));
             renderTable(allRequests);
             renderOutreachTable(allRequests);
+
+            // QA Intercept: If there's a pending outreach status update with no ID,
+            // we locate the record in allRequests that matches by ClinicName
+            if (window.pendingOutreachStatusUpdate && !window.pendingOutreachStatusUpdate.Id) {
+                const pendingUpdate = window.pendingOutreachStatusUpdate;
+                const statusToSet = pendingUpdate.Status;
+                
+                const matchedRecord = allRequests.find(r => 
+                    r.ClinicName === pendingUpdate.ClinicName && 
+                    (r.Status === 'Pending' || !r.Status || r.Status === '')
+                );
+                
+                if (matchedRecord && matchedRecord.ID) {
+                    window.pendingOutreachStatusUpdate = null; // Clear it to prevent infinite loop
+                    
+                    const updateUrl = `${SCRIPT_URL}?action=updateStatus&callback=handleOutreachStatusResponse&id=${matchedRecord.ID}&status=${encodeURIComponent(statusToSet)}`;
+                    jsonpRequest(updateUrl);
+                    return; 
+                }
+            }
+            
+            updateDashboard();
         }
 
         function renderTable(requests) {
@@ -1553,7 +1575,7 @@
                 ClinicName: document.getElementById('clinicName').value,
                 Address: document.getElementById('address').value,
                 PhoneNumber: document.getElementById('phoneNumber').value,
-                Price: !isNaN(priceVal) ? priceVal : 150,
+                Price: !isNaN(priceVal) ? priceVal : 100,
                 Status: targetStatus
             };
             
@@ -1590,6 +1612,17 @@
                         handleSaveResponse({ result: 'success', message: 'บันทึกรายการ (จำลอง) สำเร็จ' });
                     }, 800);
                 } else {
+                    // QA Intercept: If converting an outreach lead to physical delivery online,
+                    // force-update the status column on the server to 'Pending' explicitly!
+                    if (recordId) {
+                        const record = allRequests.find(r => r.ID === recordId);
+                        if (record && record.Status && record.Status.startsWith('ทักแล้ว')) {
+                            window.pendingOutreachStatusUpdate = {
+                                Status: 'Pending',
+                                Id: recordId
+                            };
+                        }
+                    }
                     const action = recordId ? 'updateRequest' : 'addRequest';
                     const url = `${SCRIPT_URL}?action=${action}&callback=handleSaveResponse&data=${encodeURIComponent(JSON.stringify(data))}`;
                     jsonpRequest(url);
@@ -1951,7 +1984,7 @@
                 const status = item.Status || '';
                 // Price only counts for deliveries (Pending, ส่งแล้ว, Approved) or converted outreach
                 if (status !== 'ทักแล้ว - เงียบ' && status !== 'ทักแล้ว - ปฏิเสธ') {
-                    return sum + (parseFloat(item.Price) || 150);
+                    return sum + (parseFloat(item.Price) || 100);
                 }
                 return sum;
             }, 0);
@@ -2001,7 +2034,7 @@
                     statusColor = 'bg-pink-100 text-pink-700 border-pink-200';
                 }
                 
-                const itemPrice = (statusText !== 'ทักแล้ว - เงียบ' && statusText !== 'ทักแล้ว - ปฏิเสธ') ? (parseFloat(item.Price) || 150) : 0;
+                const itemPrice = (statusText !== 'ทักแล้ว - เงียบ' && statusText !== 'ทักแล้ว - ปฏิเสธ') ? (parseFloat(item.Price) || 100) : 0;
                 
                 tr.innerHTML = `
                     <td class="py-3 px-6 text-xs text-gray-400 font-mono">${index + 1}</td>
@@ -2053,7 +2086,7 @@
             const totalPrice = filteredData.reduce((sum, item) => {
                 const status = item.Status || '';
                 if (status !== 'ทักแล้ว - เงียบ' && status !== 'ทักแล้ว - ปฏิเสธ') {
-                    return sum + (parseFloat(item.Price) || 150);
+                    return sum + (parseFloat(item.Price) || 100);
                 }
                 return sum;
             }, 0);
@@ -2086,7 +2119,7 @@
                 filteredData.forEach((item, index) => {
                     const tr = document.createElement('tr');
                     const statusText = item.Status || 'Pending';
-                    const itemPrice = (statusText !== 'ทักแล้ว - เงียบ' && statusText !== 'ทักแล้ว - ปฏิเสธ') ? (parseFloat(item.Price) || 150) : 0;
+                    const itemPrice = (statusText !== 'ทักแล้ว - เงียบ' && statusText !== 'ทักแล้ว - ปฏิเสธ') ? (parseFloat(item.Price) || 100) : 0;
                     
                     tr.innerHTML = `
                         <td class="border border-gray-300 p-2">${index + 1}</td>
@@ -2244,6 +2277,8 @@
                 // Intercept status to execute status updates seamlessly
                 window.pendingOutreachStatusUpdate = {
                     Status: targetStatus,
+                    ClinicName: data.ClinicName,
+                    Address: data.Address,
                     Id: recordId || null
                 };
                 const action = recordId ? 'updateRequest' : 'addRequest';
@@ -2278,7 +2313,7 @@
             document.getElementById('clinicName').value = record.ClinicName || '';
             document.getElementById('address').value = `เพจคลินิก: ${record.Address || ''}\nที่อยู่จัดส่ง: `;
             document.getElementById('phoneNumber').value = '';
-            document.getElementById('servicePrice').value = '150';
+            document.getElementById('servicePrice').value = '100';
             
             document.getElementById('originalData').value = JSON.stringify({
                 DentistName: '-',
