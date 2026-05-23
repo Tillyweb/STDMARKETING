@@ -271,14 +271,16 @@
             .view {
                 display: none !important;
             }
-            #print-view {
+            #print-view, #print-report-view {
                 display: block !important;
                 opacity: 1 !important;
                 transform: none !important;
                 padding-top: 0 !important;
                 margin: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
             }
-            #print-content {
+            #print-content, #print-report-content {
                 box-shadow: none !important;
                 border: none !important;
                 padding: 0 !important;
@@ -330,6 +332,9 @@
                 <div id="logged-in-nav" class="hidden flex items-center space-x-2 md:space-x-4">
                     <button onclick="switchView('main-view')" class="nav-btn active hover:bg-brand-500/10 text-brand-900 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2">
                         <span>📋</span> <span class="hidden sm:inline">หน้าหลัก (ตาราง)</span>
+                    </button>
+                    <button onclick="switchView('outreach-view')" class="nav-btn hover:bg-brand-500/10 text-brand-700 hover:text-brand-900 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2">
+                        <span>🎯</span> <span class="hidden sm:inline">การตลาดเชิงรุก (ทักเพจ)</span>
                     </button>
                     <button onclick="switchView('dashboard-view')" class="nav-btn hover:bg-brand-500/10 text-brand-700 hover:text-brand-900 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2">
                         <span>📊</span> <span class="hidden sm:inline">แดชบอร์ด AI</span>
@@ -473,6 +478,74 @@
                 </div>
             </div>
 
+            <!-- View 4: Proactive Outreach View -->
+            <div id="outreach-view" class="view">
+                <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-sm mb-6">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-brand-900 tracking-tight">🎯 การตลาดเชิงรุก (Proactive Social Outreach)</h2>
+                            <p class="text-sm text-gray-500 mt-1">ติดตามประวัติการทักเพจ Facebook คลินิก เพื่อนำเสนอข้อมูลและติดตามผลจนกว่าจะตกลงรับใบราคา</p>
+                        </div>
+                        <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                            <!-- Search Glass Input -->
+                            <div class="relative flex-grow sm:w-80">
+                                <span class="absolute left-4 top-3.5 text-gray-400">🔍</span>
+                                <input type="text" id="outreachSearchInput" onkeyup="filterOutreachTable()" placeholder="ค้นหาชื่อคลินิก หรือหมายเหตุ..." class="w-full pl-11 pr-4 py-3 rounded-xl glass-input text-sm focus:outline-none">
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex space-x-2">
+                                <button onclick="fetchData()" class="flex-1 sm:flex-none flex items-center justify-center bg-brand-100 hover:bg-brand-200 text-brand-700 font-bold py-3 px-5 rounded-xl text-sm transition-all transform hover:-translate-y-0.5 active:translate-y-0 shadow-sm border border-brand-200/50">
+                                    🔄 <span class="ml-2">รีเฟรชข้อมูล</span>
+                                </button>
+                                <button onclick="showOutreachDrawer()" class="flex-1 sm:flex-none flex items-center justify-center bg-gradient-to-r from-violet-600 to-brand-500 hover:from-violet-700 hover:to-brand-600 text-white font-bold py-3 px-5 rounded-xl text-sm transition-all transform hover:-translate-y-0.5 active:translate-y-0 shadow-md shadow-brand-500/20">
+                                    💬 <span class="ml-2">ทักคลินิกใหม่</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Outreach Micro Stats Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="p-4 rounded-2xl bg-brand-50/50 border border-brand-100/50 flex flex-col">
+                            <span class="text-xs text-brand-600 font-bold uppercase tracking-wider">ทักเพจสะสม</span>
+                            <span id="stat-outreach-total" class="text-2xl font-extrabold text-brand-900 font-outfit mt-1">0</span>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-amber-50/50 border border-amber-100/50 flex flex-col">
+                            <span class="text-xs text-amber-700 font-bold uppercase tracking-wider">เงียบ / ไม่ตอบ</span>
+                            <span id="stat-outreach-silent" class="text-2xl font-extrabold text-amber-900 font-outfit mt-1">0</span>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-red-50/50 border border-red-100/50 flex flex-col">
+                            <span class="text-xs text-red-700 font-bold uppercase tracking-wider">ปฏิเสธแล้ว</span>
+                            <span id="stat-outreach-rejected" class="text-2xl font-extrabold text-red-900 font-outfit mt-1">0</span>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100/50 flex flex-col">
+                            <span class="text-xs text-emerald-700 font-bold uppercase tracking-wider">สนใจ / ตอบรับ</span>
+                            <span id="stat-outreach-interested" class="text-2xl font-extrabold text-emerald-900 font-outfit mt-1">0</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Outreach Table -->
+                    <div class="overflow-x-auto rounded-2xl border border-brand-100/50 shadow-inner bg-white/45">
+                        <table class="min-w-full divide-y divide-brand-100/40">
+                            <thead class="bg-brand-50/50">
+                                <tr>
+                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ชื่อคลินิก</th>
+                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ลิงก์เพจเฟซบุ๊ก</th>
+                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">วันที่ติดต่อ</th>
+                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">สถานะการติดตาม</th>
+                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">บันทึกข้อความ / ผลการตอบกลับ</th>
+                                    <th class="py-4 px-6 text-center text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">จัดการการติดตาม</th>
+                                </tr>
+                            </thead>
+                            <tbody id="outreachTableBody" class="divide-y divide-brand-100/20 text-gray-700">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- View 2: Dashboard View -->
             <div id="dashboard-view" class="view">
                 <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-sm">
@@ -500,6 +573,24 @@
                                         <!-- Year options populated dynamically -->
                                     </select>
                                 </div>
+                                <div>
+                                    <label for="monthFilter" class="block text-xs font-bold text-brand-800 uppercase tracking-wider mb-2">เลือกเดือนการแสดงผล:</label>
+                                    <select id="monthFilter" onchange="updateDashboard()" class="w-full p-3 rounded-xl glass-input text-sm text-brand-900 focus:outline-none">
+                                        <option value="all">แสดงผลทุกเดือน</option>
+                                        <option value="0">มกราคม (January)</option>
+                                        <option value="1">กุมภาพันธ์ (February)</option>
+                                        <option value="2">มีนาคม (March)</option>
+                                        <option value="3">เมษายน (April)</option>
+                                        <option value="4">พฤษภาคม (May)</option>
+                                        <option value="5">มิถุนายน (June)</option>
+                                        <option value="6">กรกฎาคม (July)</option>
+                                        <option value="7">สิงหาคม (August)</option>
+                                        <option value="8">กันยายน (September)</option>
+                                        <option value="9">ตุลาคม (October)</option>
+                                        <option value="10">พฤศจิกายน (November)</option>
+                                        <option value="11">ธันวาคม (December)</option>
+                                    </select>
+                                </div>
                                 <div class="p-4 rounded-xl bg-brand-50 border border-brand-100/70 text-xs text-brand-700 leading-relaxed shadow-inner">
                                     💡 <b>คำแนะนำ:</b> ใช้กราฟแท่งเปรียบเทียบการดำเนินการเพื่อปรับแผนกลยุทธ์ของฝ่ายพัฒนาผลิตภัณฑ์และส่งซองเอกสารการตลาด
                                 </div>
@@ -514,6 +605,70 @@
                             <div class="relative flex-grow min-h-[300px] w-full flex items-center justify-center">
                                 <canvas id="statusByMonthChart" class="w-full"></canvas>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Summary Reports & Tables [NEW] -->
+                    <div class="mt-8 border-t border-brand-100/30 pt-8">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                            <div>
+                                <h3 class="text-lg font-extrabold text-brand-900 tracking-tight flex items-center space-x-2">
+                                    <span>📊</span> <span id="monthly-report-title-label">รายงานสรุปผลการดำเนินงานทางการตลาด</span>
+                                </h3>
+                                <p class="text-xs text-gray-500 mt-1">รายละเอียดจำนวนคลินิกที่ติดต่อ การตอบรับ และสรุปราคาค่าบริการรายเดือน</p>
+                            </div>
+                            <button onclick="printMonthlyReport()" class="flex items-center justify-center bg-brand-100 hover:bg-brand-200 text-brand-700 font-bold py-2.5 px-5 rounded-xl text-sm transition-all border border-brand-200/50 hover:scale-[1.02]">
+                                🖨️ <span class="ml-2">พิมพ์รายงานประจำเดือน</span>
+                            </button>
+                        </div>
+
+                        <!-- 4 Premium KPI Cards -->
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                            <!-- KPI 1 -->
+                            <div class="p-5 rounded-2xl bg-gradient-to-tr from-brand-50 to-brand-100/30 border border-brand-200/40 flex flex-col shadow-sm">
+                                <span class="text-xs text-brand-700 font-bold uppercase tracking-wider">🏥 ทักไปกี่คลินิก (รวม)</span>
+                                <span id="kpi-contacted-count" class="text-3xl font-extrabold text-brand-950 font-outfit mt-2">0</span>
+                                <span class="text-[10px] text-gray-400 mt-1">จำนวนที่ทักเพจ + จัดส่งซอง</span>
+                            </div>
+                            <!-- KPI 2 -->
+                            <div class="p-5 rounded-2xl bg-gradient-to-tr from-emerald-50 to-emerald-100/10 border border-emerald-200/40 flex flex-col shadow-sm">
+                                <span class="text-xs text-emerald-800 font-bold uppercase tracking-wider">✅ มีกี่คลินิกตอบรับ</span>
+                                <span id="kpi-responded-count" class="text-3xl font-extrabold text-emerald-950 font-outfit mt-2">0</span>
+                                <span class="text-[10px] text-gray-400 mt-1 font-semibold text-emerald-700/80" id="kpi-responded-sub">สถานะส่งแล้ว/ตอบรับ</span>
+                            </div>
+                            <!-- KPI 3 -->
+                            <div class="p-5 rounded-2xl bg-gradient-to-tr from-sky-50 to-sky-100/10 border border-sky-200/40 flex flex-col shadow-sm">
+                                <span class="text-xs text-sky-800 font-bold uppercase tracking-wider">🎯 อัตราการตอบรับ</span>
+                                <span id="kpi-success-rate" class="text-3xl font-extrabold text-sky-950 font-outfit mt-2">0%</span>
+                                <div class="w-full bg-gray-200 h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div id="kpi-success-bar" class="bg-sky-500 h-1.5 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <!-- KPI 4 -->
+                            <div class="p-5 rounded-2xl bg-gradient-to-tr from-violet-50 to-violet-100/10 border border-violet-200/40 flex flex-col shadow-sm">
+                                <span class="text-xs text-violet-850 font-bold uppercase tracking-wider">💰 ราคารวมสะสม</span>
+                                <span id="kpi-total-price" class="text-3xl font-extrabold text-brand-900 font-outfit mt-2">฿0.00</span>
+                                <span class="text-[10px] text-gray-400 mt-1">ราคารวมของซองเอกสารจัดส่ง</span>
+                            </div>
+                        </div>
+
+                        <!-- Monthly Detailed Table -->
+                        <div class="overflow-x-auto rounded-2xl border border-brand-100/40 shadow-inner bg-white/45">
+                            <table class="min-w-full divide-y divide-brand-100/20">
+                                <thead class="bg-brand-50/50">
+                                    <tr>
+                                        <th class="py-3.5 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ลำดับ</th>
+                                        <th class="py-3.5 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">วันที่ติดต่อ</th>
+                                        <th class="py-3.5 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ชื่อทันตแพทย์</th>
+                                        <th class="py-3.5 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ชื่อคลินิก</th>
+                                        <th class="py-3.5 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">สถานะการตลาด</th>
+                                        <th class="py-3.5 px-6 text-right text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ราคา/งบประมาณ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="monthlyReportTableBody" class="divide-y divide-brand-100/10 text-gray-700">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -618,6 +773,94 @@
                 </div>
             </div>
 
+            <!-- View 5: Print Monthly Report Executive View [NEW] -->
+            <div id="print-report-view" class="view">
+                <div class="max-w-4xl mx-auto bg-white p-12 rounded-3xl shadow-xl border border-gray-150 relative">
+                    
+                    <div id="print-report-content" class="font-['Sarabun']">
+                        <!-- Lab Header Details -->
+                        <div class="flex justify-between items-start border-b-4 border-brand-900 pb-6 mb-8">
+                            <div>
+                                <h2 class="text-xl font-extrabold text-brand-900 tracking-tight">ห้างหุ้นส่วนจำกัด เอส.ที.ดี.เด็นตอล แลป (จ.เชียงใหม่)</h2>
+                                <p class="text-xs text-gray-500 mt-1.5 font-bold">📍 สำนักงาน: ต.สันปูเลย อ.ดอยสะเก็ด จ.เชียงใหม่ (ใกล้แยกแม่กวง)</p>
+                                <p class="text-[11px] text-gray-500 mt-0.5">ผู้ผลิตและจำหน่ายเครื่องมือทางทันตกรรมแก่คลินิกและโรงพยาบาลทั่วประเทศ</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-3 py-1 bg-brand-900 text-white rounded-md text-xs font-bold tracking-wider uppercase font-outfit">รายงานการตลาดและการสั่งงานรายเดือน</span>
+                                <p id="print-report-month-title" class="text-sm text-brand-700 font-bold mt-2"></p>
+                            </div>
+                        </div>
+
+                        <h3 class="text-lg font-extrabold text-brand-900 mb-6 text-center border-b border-brand-100 pb-2">📊 รายงานสรุปผลการดำเนินงานทางการตลาด</h3>
+
+                        <!-- 4 KPI Blocks for Printing -->
+                        <div class="grid grid-cols-4 gap-4 mb-8">
+                            <div class="p-4 rounded-xl border border-gray-300 bg-gray-50 flex flex-col text-center">
+                                <span class="text-xs text-gray-500 font-bold uppercase">ทักไปกี่คลินิก (รวม)</span>
+                                <span id="print-kpi-contacted" class="text-2xl font-extrabold text-gray-850 mt-1">0</span>
+                            </div>
+                            <div class="p-4 rounded-xl border border-gray-300 bg-gray-50 flex flex-col text-center">
+                                <span class="text-xs text-gray-500 font-bold uppercase">มีกี่คลินิกตอบรับ</span>
+                                <span id="print-kpi-responded" class="text-2xl font-extrabold text-gray-850 mt-1">0</span>
+                            </div>
+                            <div class="p-4 rounded-xl border border-gray-300 bg-gray-50 flex flex-col text-center">
+                                <span class="text-xs text-gray-500 font-bold uppercase">อัตราการตอบรับ</span>
+                                <span id="print-kpi-rate" class="text-2xl font-extrabold text-gray-850 mt-1">0%</span>
+                            </div>
+                            <div class="p-4 rounded-xl border border-gray-300 bg-gray-50 flex flex-col text-center">
+                                <span class="text-xs text-gray-500 font-bold uppercase">ราคารวมสะสม</span>
+                                <span id="print-kpi-price" class="text-2xl font-extrabold text-brand-700 mt-1">฿0.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Print Table -->
+                        <div class="mb-10">
+                            <table class="min-w-full border-collapse border border-gray-300 text-xs text-gray-800">
+                                <thead>
+                                    <tr class="bg-gray-100">
+                                        <th class="border border-gray-300 p-2 text-left">ลำดับ</th>
+                                        <th class="border border-gray-300 p-2 text-left">วันที่ติดต่อ</th>
+                                        <th class="border border-gray-300 p-2 text-left">ชื่อทันตแพทย์</th>
+                                        <th class="border border-gray-300 p-2 text-left">ชื่อคลินิก</th>
+                                        <th class="border border-gray-300 p-2 text-left">สถานะการตลาด</th>
+                                        <th class="border border-gray-300 p-2 text-right">ราคา/งบประมาณ (บาท)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="print-report-table-body">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Executive Sign-off Blocks -->
+                        <div class="grid grid-cols-2 gap-12 mt-16 pt-8 border-t border-gray-200">
+                            <div class="flex flex-col items-center">
+                                <p class="text-xs text-gray-500 mb-16">ผู้จัดทำรายงาน / Reporter</p>
+                                <div class="w-48 border-b border-gray-400 mb-2"></div>
+                                <p class="text-xs font-semibold text-gray-700">(........................................................)</p>
+                                <p class="text-[10px] text-gray-400 mt-1">ตำแหน่ง: พนักงานฝ่ายส่งเสริมการตลาด</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <p class="text-xs text-gray-500 mb-16">ผู้ตรวจสอบและอนุมัติ / Manager</p>
+                                <div class="w-48 border-b border-gray-400 mb-2"></div>
+                                <p class="text-xs font-semibold text-gray-700">(........................................................)</p>
+                                <p class="text-[10px] text-gray-400 mt-1">ตำแหน่ง: ผู้บริหาร หจก. เอส.ที.ดี.เด็นตอล แลป</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Print Layout Controls -->
+                    <div class="mt-12 flex justify-end space-x-3 no-print">
+                        <button onclick="switchView('dashboard-view')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-xl text-sm transition-all border border-gray-200">
+                            🔙 กลับไปแดชบอร์ด
+                        </button>
+                        <button onclick="window.print()" class="bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white font-bold py-3 px-6 rounded-xl text-sm transition-all shadow-md shadow-brand-500/20">
+                            🖨️ พิมพ์รายงาน (Print / PDF)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </main>
@@ -685,9 +928,15 @@
                 <textarea id="address" required rows="3" placeholder="ตัวอย่าง: 456 ถนนลาดพร้าว ซอย 34 แขวงจอมพล เขตจตุจักร กรุงเทพฯ 10900" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none resize-none"></textarea>
             </div>
             
-            <div class="space-y-1">
-                <label for="phoneNumber" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">เบอร์โทรศัพท์ติดต่อ <span class="text-red-500">*</span></label>
-                <input type="tel" id="phoneNumber" required placeholder="ตัวอย่าง: 0812345678" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label for="phoneNumber" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">เบอร์โทรศัพท์ติดต่อ <span class="text-red-500">*</span></label>
+                    <input type="tel" id="phoneNumber" required placeholder="ตัวอย่าง: 0812345678" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none">
+                </div>
+                <div class="space-y-1">
+                    <label for="servicePrice" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">ราคาชุดบริการ/งบประมาณ (บาท)</label>
+                    <input type="number" id="servicePrice" min="0" placeholder="ว่างไว้จะเท่ากับ 150 บาท" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none">
+                </div>
             </div>
             
             <div class="pt-6 border-t border-brand-100 flex space-x-3 mt-8">
@@ -696,6 +945,61 @@
                 </button>
                 <button type="submit" class="flex-1 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-md shadow-brand-500/20 text-center">
                     💾 บันทึกข้อมูล
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ================== sliding outreach lead form drawer panel ================== -->
+    <div id="outreach-drawer-overlay" onclick="toggleDrawer('outreach-drawer')" class="drawer-overlay fixed inset-0 z-50"></div>
+    <div id="outreach-drawer" class="drawer fixed top-0 right-0 w-full max-w-lg h-full bg-white/95 backdrop-blur-2xl shadow-2xl border-l border-brand-100/40 z-50 p-8 overflow-y-auto flex flex-col">
+        <div class="flex justify-between items-center border-b border-brand-100 pb-4 mb-6">
+            <h3 id="outreach-form-title" class="text-xl font-extrabold text-brand-900 flex items-center space-x-2">
+                <span>🎯</span> <span>บันทึกการทักคลินิกเชิงรุก</span>
+            </h3>
+            <button onclick="toggleDrawer('outreach-drawer')" class="text-gray-400 hover:text-gray-600 text-xl font-bold p-1">×</button>
+        </div>
+        
+        <!-- Outreach Input Form -->
+        <form id="outreachForm" onsubmit="saveOutreachData(event)" class="space-y-5 flex-grow">
+            <input type="hidden" id="outreachRecordId">
+            
+            <div class="space-y-1">
+                <label for="outreachClinicName" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">ชื่อคลินิกทันตกรรม <span class="text-red-500">*</span></label>
+                <input type="text" id="outreachClinicName" required placeholder="ตัวอย่าง: คลินิกทันตกรรมสไมล์เฮ้าส์" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none">
+            </div>
+            
+            <div class="space-y-1">
+                <label for="outreachPageLink" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">ลิงก์เพจ Facebook / ช่องทางการทัก <span class="text-red-500">*</span></label>
+                <input type="url" id="outreachPageLink" required placeholder="ตัวอย่าง: https://www.facebook.com/clinicpage" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label for="outreachDate" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">วันที่ทักไป <span class="text-red-500">*</span></label>
+                    <input type="date" id="outreachDate" required class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none">
+                </div>
+                <div class="space-y-1">
+                    <label for="outreachStatus" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">สถานะติดตาม <span class="text-red-500">*</span></label>
+                    <select id="outreachStatus" required class="w-full p-3.5 rounded-xl glass-input text-sm text-brand-900 focus:outline-none">
+                        <option value="ทักแล้ว - เงียบ">💬 ทักแล้ว - เงียบ</option>
+                        <option value="ทักแล้ว - ปฏิเสธ">❌ ทักแล้ว - ปฏิเสธ</option>
+                        <option value="ทักแล้ว - สนใจ">💖 ทักแล้ว - สนใจ</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <label for="outreachNotes" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">บันทึกติดตามผล / หมายเหตุเพิ่มเติม</label>
+                <textarea id="outreachNotes" rows="3" placeholder="ตัวอย่าง: ทักแชทแนะนำตัวแผ่นพับแลปแล้ว คลินิกอ่านแล้วยังไม่ตอบ..." class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none resize-none"></textarea>
+            </div>
+            
+            <div class="pt-6 border-t border-brand-100 flex space-x-3 mt-8">
+                <button type="button" onclick="toggleDrawer('outreach-drawer')" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3.5 rounded-xl text-sm transition-all border border-gray-200 text-center">
+                    ยกเลิก
+                </button>
+                <button type="submit" class="flex-1 bg-gradient-to-r from-violet-600 to-brand-500 hover:from-violet-700 hover:to-brand-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-md shadow-brand-500/20 text-center">
+                    💾 บันทึกการทักเพจ
                 </button>
             </div>
         </form>
@@ -1013,50 +1317,30 @@
                 document.body.appendChild(badge);
             }
             
-            // Rich mock lists
+            // Rich mock lists containing both physical shipments and proactive social outreach leads
             allRequests = [
-                { ID: "DEMO-001", DentistName: "ทพ.สมชาย ยินดี", ClinicName: "คลินิกทันตกรรมรักยิ้ม ลาดพร้าว", Address: "123 ถนนลาดพร้าว ซอย 12 แขวงจอมพล เขตจตุจักร กรุงเทพฯ 10900", PhoneNumber: "0812345678", Status: "ส่งแล้ว", Date: "2026-01-10" },
-                { ID: "DEMO-002", DentistName: "ทพญ. รัชนี ทิพวรรณ", ClinicName: "คลินิกทันตกรรมสมดุลยิ้ม สุขุมวิท", Address: "456 ถนนสุขุมวิท ซอย 24 แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110", PhoneNumber: "0898765432", Status: "Pending", Date: "2026-02-15" },
-                { ID: "DEMO-003", DentistName: "ทพ. อนันต์ รักษ์ฟัน", ClinicName: "โรงพยาบาลฟันดีเดนทัล พหลโยธิน", Address: "789 ถนนพหลโยธิน แขวงสามเสนใน เขตพญาไท กรุงเทพฯ 10400", PhoneNumber: "0865551234", Status: "Approved", Date: "2026-03-20" },
-                { ID: "DEMO-004", DentistName: "ทพญ. วรรณภา วงศ์ดี", ClinicName: "คลินิกทันตกรรมสไมล์เซ็นเตอร์", Address: "99 ถนนรัชดาภิเษก แขวงดินแดง เขตดินแดง กรุงเทพฯ 10400", PhoneNumber: "0951112222", Status: "ส่งแล้ว", Date: "2026-01-25" },
-                { ID: "DEMO-005", DentistName: "ทพ. สุรพล เลิศทันต์", ClinicName: "คลินิกทันตกรรมฟันสวยงาม", Address: "22/1 ถนนพระราม 9 แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพฯ 10310", PhoneNumber: "0887778888", Status: "Pending", Date: "2026-02-05" },
-                { ID: "DEMO-006", DentistName: "ทพญ. สุดา ศรีเดนทัล", ClinicName: "เดนทัลแคร์คลินิก", Address: "101 ถนนรามคำแหง แขวงหัวหมาก เขตบางกะปิ กรุงเทพฯ 10240", PhoneNumber: "0823334444", Status: "ส่งแล้ว", Date: "2026-03-05" },
-                { ID: "DEMO-007", DentistName: "ทพ. วิชัย มุ่งมั่น", ClinicName: "คลินิกทันตแพทย์วิชัย", Address: "55 ถนนเพชรบุรี แขวงมักกะสัน เขตราชเทวี กรุงเทพฯ 10400", PhoneNumber: "0819990000", Status: "Approved", Date: "2026-04-12" }
+                { ID: "DEMO-001", DentistName: "ทพ.สมชาย ยินดี", ClinicName: "คลินิกทันตกรรมรักยิ้ม ลาดพร้าว", Address: "123 ถนนลาดพร้าว ซอย 12 แขวงจอมพล เขตจตุจักร กรุงเทพฯ 10900", PhoneNumber: "0812345678", Status: "ส่งแล้ว", Date: "2026-05-10", Price: 150, Notes: "ทักไปเสนอชุดการตลาด" },
+                { ID: "DEMO-002", DentistName: "ทพญ. รัชนี ทิพวรรณ", ClinicName: "คลินิกทันตกรรมสมดุลยิ้ม สุขุมวิท", Address: "456 ถนนสุขุมวิท ซอย 24 แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110", PhoneNumber: "0898765432", Status: "Pending", Date: "2026-05-15", Price: 250, Notes: "รอหมอตรวจทานที่อยู่" },
+                { ID: "DEMO-003", DentistName: "ทพ. อนันต์ รักษ์ฟัน", ClinicName: "โรงพยาบาลฟันดีเดนทัล พหลโยธิน", Address: "789 ถนนพหลโยธิน แขวงสามเสนใน เขตพญาไท กรุงเทพฯ 10400", PhoneNumber: "0865551234", Status: "Approved", Date: "2026-05-20", Price: 500, Notes: "ตอบรับเรียบร้อย ส่งเคสแลปชุดแรกแล้ว" },
+                { ID: "DEMO-004", DentistName: "-", ClinicName: "คลินิกสไมล์เดนทัล อารีย์", Address: "https://www.facebook.com/smiledental.ari", PhoneNumber: "-", Status: "ทักแล้ว - เงียบ", Date: "2026-05-22", Price: 0, Notes: "ส่งแชทแผ่นพับแลปแล้ว อ่านแล้วเงียบ" },
+                { ID: "DEMO-005", DentistName: "-", ClinicName: "คลินิกทันตแพทย์สุชาติ เชียงใหม่", Address: "https://www.facebook.com/suchartdental", PhoneNumber: "-", Status: "ทักแล้ว - ปฏิเสธ", Date: "2026-05-18", Price: 0, Notes: "ปฏิเสธแจ้งว่ามีแลปประจำอยู่แล้ว" },
+                { ID: "DEMO-006", DentistName: "-", ClinicName: "คลินิกฟันสวย ลำพูน", Address: "https://www.facebook.com/fansuay.lamphun", PhoneNumber: "-", Status: "ทักแล้ว - สนใจ", Date: "2026-05-23", Price: 150, Notes: "สนใจแผ่นพับและใบเสนอราคา ขอให้ส่งซอง" },
+                { ID: "DEMO-007", DentistName: "ทพญ. สุดา ศรีเดนทัล", ClinicName: "เดนทัลแคร์คลินิก เชียงใหม่", Address: "101 ถนนรามคำแหง แขวงหัวหมาก เขตบางกะปิ กรุงเทพฯ 10240", PhoneNumber: "0823334444", Status: "ส่งแล้ว", Date: "2026-05-05", Price: 150, Notes: "จัดส่งซองข้อมูลเรียบร้อย" },
+                { ID: "DEMO-008", DentistName: "ทพ. วิชัย มุ่งมั่น", ClinicName: "คลินิกทันตแพทย์วิชัย", Address: "55 ถนนเพชรบุรี แขวงมักกะสัน เขตราชเทวี กรุงเทพฯ 10400", PhoneNumber: "0819990000", Status: "Approved", Date: "2026-04-12", Price: 300, Notes: "ตกลงยอมรับใบเสนอราคาและเปิดรับบริการแลป" }
             ];
             
-            dashboardData = [
-                { Date: "2026-01-05", Status: "ส่งแล้ว" },
-                { Date: "2026-01-12", Status: "ส่งแล้ว" },
-                { Date: "2026-01-15", Status: "Pending" },
-                { Date: "2026-01-20", Status: "ส่งแล้ว" },
-                { Date: "2026-02-02", Status: "ส่งแล้ว" },
-                { Date: "2026-02-08", Status: "Pending" },
-                { Date: "2026-02-14", Status: "Pending" },
-                { Date: "2026-02-22", Status: "ส่งแล้ว" },
-                { Date: "2026-03-01", Status: "ส่งแล้ว" },
-                { Date: "2026-03-10", Status: "ส่งแล้ว" },
-                { Date: "2026-03-15", Status: "Pending" },
-                { Date: "2026-03-24", Status: "ส่งแล้ว" },
-                { Date: "2026-04-05", Status: "ส่งแล้ว" },
-                { Date: "2026-04-18", Status: "Pending" },
-                { Date: "2026-05-02", Status: "ส่งแล้ว" },
-                { Date: "2026-05-15", Status: "ส่งแล้ว" },
-                { Date: "2026-05-28", Status: "Pending" },
-                { Date: "2026-06-12", Status: "ส่งแล้ว" },
-                { Date: "2026-06-25", Status: "ส่งแล้ว" },
-                { Date: "2026-07-04", Status: "ส่งแล้ว" },
-                { Date: "2026-07-19", Status: "Pending" },
-                { Date: "2026-08-10", Status: "ส่งแล้ว" },
-                { Date: "2026-09-15", Status: "ส่งแล้ว" },
-                { Date: "2026-10-02", Status: "ส่งแล้ว" },
-                { Date: "2026-11-14", Status: "Pending" },
-                { Date: "2026-12-20", Status: "ส่งแล้ว" }
-            ];
+            // Re-map dashboardData dynamically from allRequests to ensure absolute single-source alignment
+            dashboardData = allRequests.map(item => ({
+                Date: item.Date,
+                Status: item.Status,
+                Price: item.Price || 0
+            }));
             
             document.getElementById('tableBodySkeleton').style.display = 'none';
             document.getElementById('tableBody').style.display = 'table-row-group';
             
             renderTable(allRequests);
+            renderOutreachTable(allRequests);
             populateYearFilter();
             updateDashboard();
             
@@ -1072,6 +1356,7 @@
         function fetchData() {
             if (isDemoMode) {
                 renderTable(allRequests);
+                renderOutreachTable(allRequests);
                 return;
             }
             document.getElementById('tableBodySkeleton').style.display = 'table-row-group';
@@ -1095,6 +1380,7 @@
             allRequests = data.records || [];
             localStorage.setItem('allRequests', JSON.stringify(allRequests));
             renderTable(allRequests);
+            renderOutreachTable(allRequests);
         }
 
         function renderTable(requests) {
@@ -1102,17 +1388,23 @@
             const userRole = localStorage.getItem('userRole');
             tableBody.innerHTML = '';
 
-            if (!requests || requests.length === 0) {
+            // Filter out proactive outreach leads from the physical mailing list
+            const deliveryRequests = requests.filter(req => {
+                const statusText = req.Status || 'Pending';
+                return statusText !== 'ทักแล้ว - เงียบ' && statusText !== 'ทักแล้ว - ปฏิเสธ' && statusText !== 'ทักแล้ว - สนใจ';
+            });
+
+            if (!deliveryRequests || deliveryRequests.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="6" class="text-center py-10 text-gray-400 font-medium">
-                            <span class="text-4xl block mb-2">📁</span> ไม่พบข้อมูลคลินิกทันตกรรม
+                            <span class="text-4xl block mb-2">📁</span> ไม่พบข้อมูลคลินิกทันตกรรมในคิวจัดส่ง
                         </td>
                     </tr>`;
                 return;
             }
 
-            requests.forEach(req => {
+            deliveryRequests.forEach(req => {
                 const tr = document.createElement('tr');
                 tr.className = 'border-b border-brand-100/10 hover:bg-brand-50/30 transition-colors duration-250';
                 
@@ -1224,11 +1516,13 @@
             document.getElementById('clinicName').value = record.ClinicName || '';
             document.getElementById('address').value = record.Address || '';
             document.getElementById('phoneNumber').value = record.PhoneNumber || '';
+            document.getElementById('servicePrice').value = record.Price !== undefined ? record.Price : '';
             document.getElementById('originalData').value = JSON.stringify({
                 DentistName: record.DentistName,
                 ClinicName: record.ClinicName,
                 Address: record.Address,
-                PhoneNumber: record.PhoneNumber
+                PhoneNumber: record.PhoneNumber,
+                Price: record.Price
             });
             
             toggleDrawer('request-drawer');
@@ -1238,13 +1532,29 @@
             event.preventDefault();
             const userRole = localStorage.getItem('userRole');
             const recordId = document.getElementById('recordId').value;
+            const priceVal = parseFloat(document.getElementById('servicePrice').value);
+            
+            let targetStatus = 'Pending';
+            if (recordId) {
+                const record = allRequests.find(r => r.ID === recordId);
+                if (record) {
+                    // If we're upgrading an outreach lead to delivery, status changes to Pending
+                    if (record.Status && record.Status.startsWith('ทักแล้ว')) {
+                        targetStatus = 'Pending';
+                    } else {
+                        targetStatus = record.Status || 'Pending';
+                    }
+                }
+            }
             
             const data = {
                 ID: recordId,
                 DentistName: document.getElementById('dentistName').value,
                 ClinicName: document.getElementById('clinicName').value,
                 Address: document.getElementById('address').value,
-                PhoneNumber: document.getElementById('phoneNumber').value
+                PhoneNumber: document.getElementById('phoneNumber').value,
+                Price: !isNaN(priceVal) ? priceVal : 150,
+                Status: targetStatus
             };
             
             if (recordId && userRole === 'Standard User') {
@@ -1255,7 +1565,7 @@
                 toggleDrawer('request-drawer');
                 
                 Swal.fire({
-                    title: 'กำลังจัดบันทึกข้อมูล...',
+                    title: 'กำลังบันทึกข้อมูล...',
                     allowOutsideClick: false,
                     didOpen: () => { Swal.showLoading(); }
                 });
@@ -1272,11 +1582,10 @@
                             const newRecord = { 
                                 ...data, 
                                 ID: newId, 
-                                Status: 'Pending',
                                 Date: new Date().toISOString().split('T')[0]
                             };
                             allRequests.push(newRecord);
-                            dashboardData.push({ Date: newRecord.Date, Status: 'Pending' });
+                            dashboardData.push({ Date: newRecord.Date, Status: newRecord.Status, Price: newRecord.Price });
                         }
                         handleSaveResponse({ result: 'success', message: 'บันทึกรายการ (จำลอง) สำเร็จ' });
                     }, 800);
@@ -1566,17 +1875,389 @@
 
         function updateDashboard() {
             const selectedYear = document.getElementById('yearFilter').value;
-            let filteredData = dashboardData;
+            const selectedMonth = document.getElementById('monthFilter').value;
             
+            let filteredData = allRequests;
+            
+            // 1. Filter by Year
             if (selectedYear !== 'all') {
-                filteredData = dashboardData.filter(item => {
+                filteredData = filteredData.filter(item => {
                     if (!item.Date) return false;
                     return new Date(item.Date).getFullYear() == selectedYear;
                 });
             }
             
-            updateStatusByMonthChart(filteredData);
+            // 2. Filter by Month
+            if (selectedMonth !== 'all') {
+                filteredData = filteredData.filter(item => {
+                    if (!item.Date) return false;
+                    return new Date(item.Date).getMonth() == parseInt(selectedMonth);
+                });
+            }
+            
+            // 3. Update Chart using filtered physical deliveries only
+            const chartData = filteredData.filter(item => {
+                const status = item.Status || '';
+                return status !== 'ทักแล้ว - เงียบ' && status !== 'ทักแล้ว - ปฏิเสธ' && status !== 'ทักแล้ว - สนใจ';
+            });
+            updateStatusByMonthChart(chartData);
+            
+            // 4. Update the brand new Monthly Performance Summary Table and KPIs!
+            updateMonthlyReportTable(filteredData, selectedYear, selectedMonth);
+            
             document.getElementById('analysis-button').disabled = filteredData.length === 0;
+        }
+
+        function updateMonthlyReportTable(data, year, month) {
+            // Contacted = all items in the filtered list (both outreach leads and physical deliveries)
+            const totalContacted = data.length;
+            
+            // Responded = items with status "ส่งแล้ว", "Approved", or "ทักแล้ว - สนใจ" (since this means they responded and requested address!)
+            const respondedCount = data.filter(item => {
+                const status = item.Status || '';
+                return status === 'ส่งแล้ว' || status === 'Approved' || status === 'ทักแล้ว - สนใจ';
+            }).length;
+            
+            const successRate = totalContacted > 0 ? Math.round((respondedCount / totalContacted) * 100) : 0;
+            
+            // Total Price = sum of all delivery items in this month.
+            const totalPrice = data.reduce((sum, item) => {
+                const status = item.Status || '';
+                // Price only counts for deliveries (Pending, ส่งแล้ว, Approved) or converted outreach
+                if (status !== 'ทักแล้ว - เงียบ' && status !== 'ทักแล้ว - ปฏิเสธ') {
+                    return sum + (parseFloat(item.Price) || 150);
+                }
+                return sum;
+            }, 0);
+            
+            // Render to DOM KPI cards
+            document.getElementById('kpi-contacted-count').textContent = totalContacted;
+            document.getElementById('kpi-responded-count').textContent = respondedCount;
+            document.getElementById('kpi-success-rate').textContent = `${successRate}%`;
+            document.getElementById('kpi-success-bar').style.width = `${successRate}%`;
+            document.getElementById('kpi-total-price').textContent = `฿${totalPrice.toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+            
+            // Dynamic Label Title
+            const monthNamesTh = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+            const yearText = year !== 'all' ? `ปี ${year}` : 'ทุกปี';
+            const monthText = month !== 'all' ? `ประจำเดือน${monthNamesTh[parseInt(month)]}` : 'สรุปสะสมทุกเดือน';
+            document.getElementById('monthly-report-title-label').textContent = `รายงานสรุปผลการดำเนินงานทางการตลาด ${monthText} (${yearText})`;
+            
+            // Populate the detailed monthly report table
+            const reportTableBody = document.getElementById('monthlyReportTableBody');
+            reportTableBody.innerHTML = '';
+            
+            if (data.length === 0) {
+                reportTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-6 text-gray-400 font-medium">
+                            ไม่พบประวัติผลงานการตลาดในช่วงเวลาดังกล่าว
+                        </td>
+                    </tr>`;
+                return;
+            }
+            
+            data.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-brand-100/10 hover:bg-brand-50/20 transition-colors';
+                
+                let statusText = item.Status || 'Pending';
+                let statusColor = 'bg-amber-100 text-amber-800 border-amber-200';
+                if (statusText === 'Approved') {
+                    statusColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+                } else if (statusText === 'ส่งแล้ว') {
+                    statusColor = 'bg-indigo-100 text-indigo-800 border-indigo-200';
+                } else if (statusText === 'ทักแล้ว - เงียบ') {
+                    statusColor = 'bg-gray-100 text-gray-600 border-gray-200';
+                } else if (statusText === 'ทักแล้ว - ปฏิเสธ') {
+                    statusColor = 'bg-red-100 text-red-700 border-red-200';
+                } else if (statusText === 'ทักแล้ว - สนใจ') {
+                    statusColor = 'bg-pink-100 text-pink-700 border-pink-200';
+                }
+                
+                const itemPrice = (statusText !== 'ทักแล้ว - เงียบ' && statusText !== 'ทักแล้ว - ปฏิเสธ') ? (parseFloat(item.Price) || 150) : 0;
+                
+                tr.innerHTML = `
+                    <td class="py-3 px-6 text-xs text-gray-400 font-mono">${index + 1}</td>
+                    <td class="py-3 px-6 text-sm text-gray-500 font-outfit">${item.Date || '-'}</td>
+                    <td class="py-3 px-6 text-sm font-bold text-gray-800">${item.DentistName || '-'}</td>
+                    <td class="py-3 px-6 text-sm text-gray-600 font-medium">${item.ClinicName || '-'}</td>
+                    <td class="py-3 px-6 text-xs">
+                        <span class="px-2 py-0.5 inline-flex leading-5 font-bold rounded-full border ${statusColor}">
+                            ${statusText}
+                        </span>
+                    </td>
+                    <td class="py-3 px-6 text-sm text-right font-bold text-brand-700 font-outfit">
+                        ${itemPrice > 0 ? `฿${itemPrice.toLocaleString('th-TH')}` : '-'}
+                    </td>
+                `;
+                reportTableBody.appendChild(tr);
+            });
+        }
+
+        function printMonthlyReport() {
+            const selectedYear = document.getElementById('yearFilter').value;
+            const selectedMonth = document.getElementById('monthFilter').value;
+            
+            let filteredData = allRequests;
+            
+            // 1. Filter by Year
+            if (selectedYear !== 'all') {
+                filteredData = filteredData.filter(item => {
+                    if (!item.Date) return false;
+                    return new Date(item.Date).getFullYear() == selectedYear;
+                });
+            }
+            
+            // 2. Filter by Month
+            if (selectedMonth !== 'all') {
+                filteredData = filteredData.filter(item => {
+                    if (!item.Date) return false;
+                    return new Date(item.Date).getMonth() == parseInt(selectedMonth);
+                });
+            }
+            
+            // KPIs
+            const totalContacted = filteredData.length;
+            const respondedCount = filteredData.filter(item => {
+                const status = item.Status || '';
+                return status === 'ส่งแล้ว' || status === 'Approved' || status === 'ทักแล้ว - สนใจ';
+            }).length;
+            const successRate = totalContacted > 0 ? Math.round((respondedCount / totalContacted) * 100) : 0;
+            const totalPrice = filteredData.reduce((sum, item) => {
+                const status = item.Status || '';
+                if (status !== 'ทักแล้ว - เงียบ' && status !== 'ทักแล้ว - ปฏิเสธ') {
+                    return sum + (parseFloat(item.Price) || 150);
+                }
+                return sum;
+            }, 0);
+            
+            // Populate print headers
+            const monthNamesTh = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+            const yearText = selectedYear !== 'all' ? `ปี ${selectedYear}` : 'สะสมรวมทุกปี';
+            const monthText = selectedMonth !== 'all' ? `ประจำเดือน ${monthNamesTh[parseInt(selectedMonth)]}` : 'สรุปผลสะสม';
+            
+            document.getElementById('print-report-month-title').textContent = `${monthText} / ${yearText}`;
+            
+            // Populate print KPIs
+            document.getElementById('print-kpi-contacted').textContent = totalContacted;
+            document.getElementById('print-kpi-responded').textContent = respondedCount;
+            document.getElementById('print-kpi-rate').textContent = `${successRate}%`;
+            document.getElementById('print-kpi-price').textContent = `฿${totalPrice.toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+            
+            // Populate print table rows
+            const printTableBody = document.getElementById('print-report-table-body');
+            printTableBody.innerHTML = '';
+            
+            if (filteredData.length === 0) {
+                printTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="border border-gray-300 p-4 text-center text-gray-500">
+                            ไม่มีประวัติข้อมูลสำหรับการตลาดในช่วงเวลานี้
+                        </td>
+                    </tr>`;
+            } else {
+                filteredData.forEach((item, index) => {
+                    const tr = document.createElement('tr');
+                    const statusText = item.Status || 'Pending';
+                    const itemPrice = (statusText !== 'ทักแล้ว - เงียบ' && statusText !== 'ทักแล้ว - ปฏิเสธ') ? (parseFloat(item.Price) || 150) : 0;
+                    
+                    tr.innerHTML = `
+                        <td class="border border-gray-300 p-2">${index + 1}</td>
+                        <td class="border border-gray-300 p-2 font-mono">${item.Date || '-'}</td>
+                        <td class="border border-gray-300 p-2 font-bold">${item.DentistName || '-'}</td>
+                        <td class="border border-gray-300 p-2 font-semibold">${item.ClinicName || '-'}</td>
+                        <td class="border border-gray-300 p-2">${statusText}</td>
+                        <td class="border border-gray-300 p-2 text-right font-bold text-gray-900">${itemPrice > 0 ? `฿${itemPrice.toLocaleString('th-TH')}` : '-'}</td>
+                    `;
+                    printTableBody.appendChild(tr);
+                });
+            }
+            
+            switchView('print-report-view');
+        }
+
+        function renderOutreachTable(requests) {
+            const tableBody = document.getElementById('outreachTableBody');
+            if (!tableBody) return;
+            tableBody.innerHTML = '';
+            
+            const outreachRequests = requests.filter(req => {
+                const status = req.Status || '';
+                return status === 'ทักแล้ว - เงียบ' || status === 'ทักแล้ว - ปฏิเสธ' || status === 'ทักแล้ว - สนใจ';
+            });
+            
+            // Calculate and display micro-stats
+            const totalOutreach = outreachRequests.length;
+            const silentCount = outreachRequests.filter(r => r.Status === 'ทักแล้ว - เงียบ').length;
+            const rejectedCount = outreachRequests.filter(r => r.Status === 'ทักแล้ว - ปฏิเสธ').length;
+            const interestedCount = outreachRequests.filter(r => r.Status === 'ทักแล้ว - สนใจ').length;
+            
+            document.getElementById('stat-outreach-total').textContent = totalOutreach;
+            document.getElementById('stat-outreach-silent').textContent = silentCount;
+            document.getElementById('stat-outreach-rejected').textContent = rejectedCount;
+            document.getElementById('stat-outreach-interested').textContent = interestedCount;
+            
+            if (outreachRequests.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-10 text-gray-400 font-medium">
+                            <span class="text-4xl block mb-2">🎯</span> ยังไม่มีประวัติการทักคลินิกเชิงรุกในระบบ
+                        </td>
+                    </tr>`;
+                return;
+            }
+            
+            outreachRequests.forEach(req => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-brand-100/10 hover:bg-brand-50/30 transition-colors duration-250';
+                
+                let statusText = req.Status || 'ทักแล้ว - เงียบ';
+                let statusColor = 'bg-gray-100 text-gray-600 border-gray-200';
+                if (statusText === 'ทักแล้ว - ปฏิเสธ') {
+                    statusColor = 'bg-red-100 text-red-700 border-red-200';
+                } else if (statusText === 'ทักแล้ว - สนใจ') {
+                    statusColor = 'bg-pink-100 text-pink-700 border-pink-200';
+                }
+                
+                const notesText = req.Notes || '-';
+                
+                tr.innerHTML = `
+                    <td class="py-4 px-6 text-sm font-bold text-brand-950">${req.ClinicName || ''}</td>
+                    <td class="py-4 px-6 text-xs text-brand-600 font-semibold font-outfit">
+                        <a href="${req.Address || '#'}" target="_blank" class="px-3 py-1.5 rounded-lg bg-brand-50 hover:bg-brand-100 hover:text-brand-900 border border-brand-200/50 inline-flex items-center transition-all">
+                            🔗 เปิดลิงก์เพจคลินิก
+                        </a>
+                    </td>
+                    <td class="py-4 px-6 text-sm text-gray-500 font-outfit">${req.Date || ''}</td>
+                    <td class="py-4 px-6 text-xs">
+                        <span class="px-2.5 py-1 inline-flex leading-5 font-bold rounded-full border ${statusColor}">
+                            ${statusText}
+                        </span>
+                    </td>
+                    <td class="py-4 px-6 text-xs text-gray-500 max-w-xs truncate" title="${notesText}">${notesText}</td>
+                    <td class="py-4 px-6 text-center whitespace-nowrap">
+                        <button onclick="editOutreachLead('${req.ID || ''}')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 py-1.5 px-3 rounded-lg text-xs font-bold transition-all mr-2">
+                            ✏️ อัปเดตติดตาม
+                        </button>
+                        <button onclick="convertToDelivery('${req.ID || ''}')" class="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white py-1.5 px-3 rounded-lg text-xs font-bold transition-all mr-2 shadow-sm">
+                            📦 จัดส่งซองใบราคา
+                        </button>
+                        <button onclick="deleteRequest('${req.ID || ''}')" class="bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-800 py-1.5 px-3 rounded-lg text-xs font-bold transition-all">
+                            🗑️ ลบ
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function showOutreachDrawer() {
+            document.getElementById('outreach-form-title').innerHTML = '<span>🎯</span> <span>ทักเพจคลินิกเชิงรุกใหม่</span>';
+            document.getElementById('outreachForm').reset();
+            document.getElementById('outreachRecordId').value = '';
+            document.getElementById('outreachDate').value = new Date().toISOString().split('T')[0];
+            toggleDrawer('outreach-drawer');
+        }
+        
+        function editOutreachLead(id) {
+            const record = allRequests.find(r => r.ID === id);
+            if (!record) return;
+            
+            document.getElementById('outreach-form-title').innerHTML = '<span>✏️</span> <span>บันทึกความคืบหน้าติดตามผล</span>';
+            document.getElementById('outreachRecordId').value = record.ID;
+            document.getElementById('outreachClinicName').value = record.ClinicName || '';
+            document.getElementById('outreachPageLink').value = record.Address || '';
+            document.getElementById('outreachDate').value = record.Date || '';
+            document.getElementById('outreachStatus').value = record.Status || 'ทักแล้ว - เงียบ';
+            document.getElementById('outreachNotes').value = record.Notes || '';
+            
+            toggleDrawer('outreach-drawer');
+        }
+        
+        function saveOutreachData(event) {
+            event.preventDefault();
+            const recordId = document.getElementById('outreachRecordId').value;
+            
+            const data = {
+                ID: recordId,
+                ClinicName: document.getElementById('outreachClinicName').value,
+                Address: document.getElementById('outreachPageLink').value,
+                Date: document.getElementById('outreachDate').value,
+                Status: document.getElementById('outreachStatus').value,
+                Notes: document.getElementById('outreachNotes').value,
+                DentistName: '-',
+                PhoneNumber: '-',
+                Price: 0
+            };
+            
+            toggleDrawer('outreach-drawer');
+            
+            Swal.fire({
+                title: 'กำลังบันทึกประวัติการทักเพจ...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            
+            if (isDemoMode) {
+                setTimeout(() => {
+                    if (recordId) {
+                        const index = allRequests.findIndex(r => r.ID === recordId);
+                        if (index !== -1) {
+                            allRequests[index] = { ...allRequests[index], ...data };
+                        }
+                    } else {
+                        const newId = `DEMO-OUT-${Math.floor(Math.random() * 1000)}`;
+                        allRequests.push({ ...data, ID: newId });
+                        dashboardData.push({ Date: data.Date, Status: data.Status, Price: 0 });
+                    }
+                    handleSaveResponse({ result: 'success', message: 'บันทึกประวัติทักเพจ (จำลอง) สำเร็จ' });
+                }, 800);
+            } else {
+                const action = recordId ? 'updateRequest' : 'addRequest';
+                const url = `${SCRIPT_URL}?action=${action}&callback=handleSaveResponse&data=${encodeURIComponent(JSON.stringify(data))}`;
+                jsonpRequest(url);
+            }
+        }
+        
+        function filterOutreachTable() {
+            const input = document.getElementById('outreachSearchInput');
+            const filter = input.value.toUpperCase();
+            
+            const outreachRequests = allRequests.filter(req => {
+                const status = req.Status || '';
+                if (status !== 'ทักแล้ว - เงียบ' && status !== 'ทักแล้ว - ปฏิเสธ' && status !== 'ทักแล้ว - สนใจ') {
+                    return false;
+                }
+                const clinic = req.ClinicName || '';
+                const notes = req.Notes || '';
+                return clinic.toUpperCase().includes(filter) || notes.toUpperCase().includes(filter);
+            });
+            renderOutreachTable(outreachRequests);
+        }
+        
+        function convertToDelivery(id) {
+            const record = allRequests.find(r => r.ID === id);
+            if (!record) return;
+            
+            document.getElementById('form-title').innerHTML = '<span>📦</span> <span>จัดเตรียมซองเพื่อจัดส่งใบราคา</span>';
+            document.getElementById('recordId').value = record.ID;
+            document.getElementById('dentistName').value = '';
+            document.getElementById('clinicName').value = record.ClinicName || '';
+            document.getElementById('address').value = `เพจคลินิก: ${record.Address || ''}\nที่อยู่จัดส่ง: `;
+            document.getElementById('phoneNumber').value = '';
+            document.getElementById('servicePrice').value = '150';
+            
+            document.getElementById('originalData').value = JSON.stringify({
+                DentistName: '-',
+                ClinicName: record.ClinicName,
+                Address: record.Address,
+                PhoneNumber: '-',
+                Price: 0,
+                Status: record.Status
+            });
+            
+            toggleDrawer('request-drawer');
         }
 
         function updateStatusByMonthChart(data) {
