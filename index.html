@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dental Lab Marketing — Advanced Premium Portal</title>
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind Configuration for Custom Theme Tokens -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c084fc',
+                            400: '#a855f7',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        },
+                        amethyst: '#180f2b',
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Prompt', 'Sarabun', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Premium CSS & Glassmorphism Framework */
+        body {
+            background-color: #f7f6fd;
+            overflow-x: hidden;
+            font-family: 'Prompt', 'Sarabun', sans-serif;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        .view {
+            display: none;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .view.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Glassmorphic Styles */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 40px -10px rgba(124, 58, 237, 0.05),
+                        0 1px 1px 0 rgba(255, 255, 255, 0.3) inset;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: 0 12px 30px -10px rgba(124, 58, 237, 0.06),
+                        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(124, 58, 237, 0.12);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .glass-input {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+            outline: none;
+        }
+
+        /* Ambient Glow Backdrop Animation */
+        .ambient-glow-1 {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.05) 50%, rgba(255, 255, 255, 0) 100%);
+            top: -100px;
+            right: -100px;
+            z-index: -10;
+            filter: blur(60px);
+            animation: drift 25s infinite alternate ease-in-out;
+        }
+
+        .ambient-glow-2 {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(139, 92, 246, 0.05) 60%, rgba(255, 255, 255, 0) 100%);
+            bottom: -150px;
+            left: -150px;
+            z-index: -10;
+            filter: blur(80px);
+            animation: drift 30s infinite alternate-reverse ease-in-out;
+        }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(50px, 80px) scale(1.1); }
+            100% { transform: translate(-30px, -40px) scale(0.9); }
+        }
+
+        /* Interactive Floating Bubble Particles */
+        #bubble-container {
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -5;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -80px;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.7) 0%, rgba(139, 92, 246, 0.1) 40%, rgba(139, 92, 246, 0.02) 80%, rgba(255, 255, 255, 0) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.04);
+            animation: floatUp linear infinite;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .bubble:hover {
+            transform: scale(1.2);
+            border-color: rgba(139, 92, 246, 0.5);
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8) 0%, rgba(139, 92, 246, 0.2) 50%, rgba(255, 255, 255, 0) 100%);
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-115vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Skeleton Loading pulse animation */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(229, 231, 235, 0.5) 25%, rgba(209, 213, 219, 0.7) 50%, rgba(229, 231, 235, 0.5) 75%);
+            background-size: 200% 100%;
+            animation: loadingPulse 1.5s infinite;
+        }
+
+        @keyframes loadingPulse {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Beautiful Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(245, 243, 255, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.3);
+            border-radius: 99px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 92, 246, 0.5);
+        }
+
+        /* Custom SweetAlert2 Sweet Amethyst Styling */
+        .swal2-popup {
+            background: rgba(255, 255, 255, 0.9) !important;
+            backdrop-filter: blur(16px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.6) !important;
+            box-shadow: 0 25px 50px -12px rgba(124, 58, 237, 0.25) !important;
+            border-radius: 24px !important;
+            font-family: 'Prompt', sans-serif !important;
+        }
+        
+        /* Shaking login form on error */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+            20%, 40%, 60%, 80% { transform: translateX(6px); }
+        }
+        .shake-element {
+            animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        /* Side-sliding Panel Overlay */
+        .drawer-overlay {
+            background: rgba(24, 15, 43, 0.4);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .drawer-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .drawer {
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .drawer.active {
+            transform: translateX(0);
+        }
+
+        /* Print styling overrides */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .no-print, header, #bubble-container, .ambient-glow-1, .ambient-glow-2, #print-controls, .drawer-overlay, .drawer {
+                display: none !important;
+            }
+            .view {
+                display: none !important;
+            }
+            #print-view {
+                display: block !important;
+                opacity: 1 !important;
+                transform: none !important;
+                padding-top: 0 !important;
+                margin: 0 !important;
+            }
+            #print-content {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            main {
+                padding-top: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-700 min-h-screen flex flex-col">
+
+    <!-- Ambient Glow Backdrops -->
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <!-- Bubble Container -->
+    <div id="bubble-container"></div>
+
+    <!-- Header Navigation -->
+    <header class="glass-panel text-gray-800 shadow-sm fixed top-0 left-0 right-0 z-40 transition-all duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Branding Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('main-view')">
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-400 text-white flex items-center justify-center shadow-md shadow-brand-500/20 transform hover:scale-105 transition-transform">
+                        <span class="text-2xl">🦷</span>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-extrabold text-brand-900 tracking-tight font-outfit uppercase">STD Dental Marketing</h1>
+                        <p class="text-[10px] text-brand-600 font-semibold uppercase tracking-wider">Advanced Partner Portal</p>
+                    </div>
+                </div>
+                
+                <!-- Logged Out Navigation -->
+                <div id="logged-out-nav" class="flex items-center space-x-2">
+                    <button onclick="promptForPassword('Admin')" class="hover:bg-brand-500/10 active:bg-brand-500/20 text-brand-700 hover:text-brand-900 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all">
+                        🔑 Admin Login
+                    </button>
+                    <button onclick="promptForPassword('Standard User')" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-brand-600/15 transition-all transform hover:-translate-y-0.5">
+                        👤 Staff Login
+                    </button>
+                </div>
+
+                <!-- Logged In Navigation -->
+                <div id="logged-in-nav" class="hidden flex items-center space-x-2 md:space-x-4">
+                    <button onclick="switchView('main-view')" class="nav-btn active hover:bg-brand-500/10 text-brand-900 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2">
+                        <span>📋</span> <span class="hidden sm:inline">หน้าหลัก (ตาราง)</span>
+                    </button>
+                    <button onclick="switchView('dashboard-view')" class="nav-btn hover:bg-brand-500/10 text-brand-700 hover:text-brand-900 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2">
+                        <span>📊</span> <span class="hidden sm:inline">แดชบอร์ด AI</span>
+                    </button>
+                    
+                    <div class="h-6 w-[1px] bg-brand-200"></div>
+
+                    <div class="flex items-center space-x-2">
+                        <!-- Role Badge Indicator -->
+                        <span id="user-role-display" class="px-3 py-1.5 rounded-lg text-xs font-bold font-outfit text-brand-700 bg-brand-100/80 border border-brand-200 shadow-sm">
+                            ROLE: STAFF
+                        </span>
+                        
+                        <!-- Settings Panel Gear Button -->
+                        <button onclick="toggleDrawer('settings-drawer')" class="p-2.5 rounded-xl hover:bg-brand-500/10 text-brand-600 hover:text-brand-800 transition-all" title="Settings">
+                            <span class="text-xl">⚙️</span>
+                        </button>
+
+                        <!-- Logout Button -->
+                        <button onclick="logout()" class="p-2.5 rounded-xl hover:bg-red-500/10 text-red-500 hover:text-red-700 transition-all" title="Logout">
+                            <span class="text-xl">🚪</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container Layout -->
+    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16 flex flex-col justify-center">
+
+        <!-- ================== Logged Out Landing/Intro Screen ================== -->
+        <div id="landing-screen" class="max-w-4xl mx-auto text-center py-12 flex flex-col items-center">
+            <span class="px-4 py-1.5 rounded-full text-xs font-bold tracking-widest text-brand-600 bg-brand-100 uppercase border border-brand-200/50 mb-6 animate-pulse">STD Dental Lab Partner Network</span>
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-700 via-brand-500 to-pink-500 tracking-tight leading-none mb-6">
+                ยกระดับการตลาดคลินิกทันตกรรม<br><span class="text-brand-900 font-outfit">ด้วยข้อมูล & พลัง AI</span>
+            </h1>
+            <p class="text-gray-500 text-lg sm:text-xl max-w-2xl mb-10 leading-relaxed">
+                ระบบจัดการรายชื่อผู้ติดต่อคลินิกทันตกรรมวิเคราะห์แนวโน้มยอดขายและการตลาดแบบอัจฉริยะ ออกแบบมาเพื่อเป็นจุดศูนย์กลางประสิทธิภาพการประสานงานของ ห.จ.ก S.T.D. DENTALLAB จำกัด
+            </p>
+            
+            <!-- Elegant Login Card Selection -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl">
+                <div class="glass-card p-8 rounded-3xl text-left cursor-pointer transform hover:scale-[1.02]" onclick="promptForPassword('Standard User')">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-100 text-brand-600 flex items-center justify-center mb-6 shadow-inner">
+                        <span class="text-2xl">👤</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-brand-900 mb-2">Staff Portal</h3>
+                    <p class="text-gray-500 text-sm mb-4">สำหรับพนักงานและฝ่ายปฏิบัติการ บันทึก เพิ่มข้อมูลคลินิก และอัปเดตสถานะขนส่งรวดเร็ว</p>
+                    <span class="text-brand-600 font-bold text-sm flex items-center">เข้าสู่ระบบ Staff →</span>
+                </div>
+                <div class="glass-card p-8 rounded-3xl text-left cursor-pointer transform hover:scale-[1.02]" onclick="promptForPassword('Admin')">
+                    <div class="w-12 h-12 rounded-2xl bg-violet-100 text-violet-600 flex items-center justify-center mb-6 shadow-inner">
+                        <span class="text-2xl">🔑</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-brand-900 mb-2">Admin Dashboard</h3>
+                    <p class="text-gray-500 text-sm mb-4">สิทธิ์การควบคุมระดับสูง อนุมัติการแก้ไขรายการ วิเคราะห์แนวโน้มตลาดและคำแนะนำจาก AI</p>
+                    <span class="text-violet-600 font-bold text-sm flex items-center">เข้าสู่ระบบผู้ดูแลระบบ →</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================== Main App Dashboard Content ================== -->
+        <div id="main-app" class="hidden flex-grow flex flex-col">
+            
+            <!-- View 1: Main Table View -->
+            <div id="main-view" class="view">
+                <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-sm">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-brand-900 tracking-tight">รายชื่อคลินิกและงานบริการ</h2>
+                            <p class="text-sm text-gray-500 mt-1">ค้นหา ตรวจสอบข้อมูล จัดเตรียมเอกสารการขนส่ง</p>
+                        </div>
+                        <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                            <!-- Search Glass Input -->
+                            <div class="relative flex-grow sm:w-80">
+                                <span class="absolute left-4 top-3.5 text-gray-400">🔍</span>
+                                <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="ค้นหาชื่อทันตแพทย์ คลินิก หรือที่อยู่..." class="w-full pl-11 pr-4 py-3 rounded-xl glass-input text-sm focus:outline-none">
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex space-x-2">
+                                <button onclick="fetchData()" class="flex-1 sm:flex-none flex items-center justify-center bg-brand-100 hover:bg-brand-200 text-brand-700 font-bold py-3 px-5 rounded-xl text-sm transition-all transform hover:-translate-y-0.5 active:translate-y-0 shadow-sm border border-brand-200/50">
+                                    🔄 <span class="ml-2">รีเฟรชข้อมูล</span>
+                                </button>
+                                <button onclick="showRequestDrawer()" class="flex-1 sm:flex-none flex items-center justify-center bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white font-bold py-3 px-5 rounded-xl text-sm transition-all transform hover:-translate-y-0.5 active:translate-y-0 shadow-md shadow-brand-500/20">
+                                    ✨ <span class="ml-2">เพิ่มคลินิกใหม่</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Requests Table -->
+                    <div class="overflow-x-auto rounded-2xl border border-brand-100/50 shadow-inner bg-white/45">
+                        <table id="requestsTable" class="min-w-full divide-y divide-brand-100/40">
+                            <thead class="bg-brand-50/50">
+                                <tr>
+                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ชื่อทันตแพทย์</th>
+                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ชื่อคลินิก</th>
+                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">ที่อยู่การจัดส่ง</th>
+                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">เบอร์โทรศัพท์</th>
+                                    <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">สถานะคำขอ</th>
+                                    <th class="py-4 px-6 text-center text-xs font-bold uppercase tracking-wider text-brand-800 font-outfit">จัดการรายการ</th>
+                                </tr>
+                            </thead>
+                            
+                            <!-- Table Skeleton Loading State -->
+                            <tbody id="tableBodySkeleton" class="divide-y divide-brand-100/20">
+                                <tr>
+                                    <td class="py-5 px-6"><div class="h-5 w-32 skeleton rounded-md"></div></td>
+                                    <td class="py-5 px-6"><div class="h-5 w-44 skeleton rounded-md"></div></td>
+                                    <td class="py-5 px-6"><div class="h-5 w-72 skeleton rounded-md"></div></td>
+                                    <td class="py-5 px-6"><div class="h-5 w-24 skeleton rounded-md"></div></td>
+                                    <td class="py-5 px-6"><div class="h-6 w-16 skeleton rounded-full"></div></td>
+                                    <td class="py-5 px-6 text-center"><div class="h-8 w-44 skeleton rounded-xl mx-auto"></div></td>
+                                </tr>
+                                <tr>
+                                    <td class="py-5 px-6"><div class="h-5 w-28 skeleton rounded-md"></div></td>
+                                    <td class="py-5 px-6"><div class="h-5 w-36 skeleton rounded-md"></div></td>
+                                    <td class="py-5 px-6"><div class="h-5 w-60 skeleton rounded-md"></div></td>
+                                    <td class="py-5 px-6"><div class="h-5 w-28 skeleton rounded-md"></div></td>
+                                    <td class="py-5 px-6"><div class="h-6 w-16 skeleton rounded-full"></div></td>
+                                    <td class="py-5 px-6 text-center"><div class="h-8 w-44 skeleton rounded-xl mx-auto"></div></td>
+                                </tr>
+                                <tr>
+                                    <td class="py-5 px-6"><div class="h-5 w-36 skeleton rounded-md"></div></td>
+                                    <td class="py-5 px-6"><div class="h-5 w-40 skeleton rounded-md"></div></td>
+                                    <td class="py-5 px-6"><div class="h-5 w-80 skeleton rounded-md"></div></td>
+                                    <td class="py-5 px-6"><div class="h-5 w-20 skeleton rounded-md"></div></td>
+                                    <td class="py-5 px-6"><div class="h-6 w-16 skeleton rounded-full"></div></td>
+                                    <td class="py-5 px-6 text-center"><div class="h-8 w-44 skeleton rounded-xl mx-auto"></div></td>
+                                </tr>
+                            </tbody>
+
+                            <!-- Real Table Body Data -->
+                            <tbody id="tableBody" class="divide-y divide-brand-100/20 text-gray-700 hidden">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View 2: Dashboard View -->
+            <div id="dashboard-view" class="view">
+                <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-sm">
+                    <!-- Dashboard Header & AI Call button -->
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-brand-900 tracking-tight">รายงานและภาพรวมข้อมูลทางการตลาด</h2>
+                            <p class="text-sm text-gray-500 mt-1">วิเคราะห์ยอดการสั่งรายเดือนและการแนะนำทิศทางการตลาดอัจฉริยะ</p>
+                        </div>
+                        <button id="analysis-button" onclick="getMarketingAnalysis()" class="flex items-center justify-center bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl text-sm transition-all transform hover:-translate-y-0.5 active:translate-y-0 shadow-lg shadow-violet-600/20">
+                            ✨ วิเคราะห์และเสนอแนะด้วย AI
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                        <!-- Controls Sidebar Card -->
+                        <div class="lg:col-span-1 glass-panel p-6 rounded-2xl border border-brand-100/40">
+                            <h3 class="text-brand-900 font-extrabold mb-4 flex items-center space-x-2 text-md">
+                                <span>🛠️</span> <span>ตัวควบคุมตัวกรอง</span>
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="yearFilter" class="block text-xs font-bold text-brand-800 uppercase tracking-wider mb-2">เลือกปีการแสดงผล:</label>
+                                    <select id="yearFilter" onchange="updateDashboard()" class="w-full p-3 rounded-xl glass-input text-sm text-brand-900 focus:outline-none">
+                                        <!-- Year options populated dynamically -->
+                                    </select>
+                                </div>
+                                <div class="p-4 rounded-xl bg-brand-50 border border-brand-100/70 text-xs text-brand-700 leading-relaxed shadow-inner">
+                                    💡 <b>คำแนะนำ:</b> ใช้กราฟแท่งเปรียบเทียบการดำเนินการเพื่อปรับแผนกลยุทธ์ของฝ่ายพัฒนาผลิตภัณฑ์และขนส่งรายไตรมาส
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chart Display Card -->
+                        <div class="lg:col-span-3 glass-panel p-6 rounded-2xl border border-brand-100/40 flex flex-col">
+                            <h3 class="text-brand-900 font-extrabold mb-4 flex items-center space-x-2 text-md border-b border-brand-100 pb-3">
+                                <span>📈</span> <span>สรุปสถานะคำขอจัดทำครอบฟันและสะพานฟันจัดส่งรายเดือน</span>
+                            </h3>
+                            <div class="relative flex-grow min-h-[300px] w-full flex items-center justify-center">
+                                <canvas id="statusByMonthChart" class="w-full"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View 3: Print Delivery Note View -->
+            <div id="print-view" class="view">
+                <div class="max-w-2xl mx-auto bg-white p-8 sm:p-12 rounded-3xl shadow-xl border border-gray-150 relative">
+                    
+                    <!-- Physical stamp decoration for premium print aesthetic -->
+                    <div class="absolute top-10 right-10 w-24 h-24 border-4 border-emerald-500/20 rounded-full flex items-center justify-center text-[10px] text-emerald-500/30 uppercase font-bold tracking-widest rotate-12 select-none pointer-events-none">
+                        S.T.D. Verified
+                    </div>
+                    
+                    <!-- Printed Slip Layout -->
+                    <div id="print-content" class="font-['Sarabun']">
+                        <!-- Sender Header Details -->
+                        <div class="flex justify-between items-start border-b-4 border-brand-900 pb-6 mb-8">
+                            <div>
+                                <h2 class="text-2xl font-extrabold text-brand-900 tracking-tight">ห.จ.ก S.T.D. DENTALLAB จำกัด</h2>
+                                <p class="text-xs text-gray-500 mt-1">123/45 ถนนนวลจันทร์ แขวงคลองกุ่ม เขตบึงกุ่ม กรุงเทพมหานคร 10230</p>
+                                <p class="text-xs text-gray-500">โทร: 02-555-9876 | อีเมล: support@stddentallab.com</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-3 py-1 bg-brand-900 text-white rounded-md text-xs font-bold tracking-wider uppercase">ใบส่งสินค้า / Delivery Voucher</span>
+                                <p class="text-xs text-gray-500 mt-2">เอกสารสำหรับการควบคุมงานขนส่ง</p>
+                            </div>
+                        </div>
+
+                        <!-- Grid details info -->
+                        <div class="grid grid-cols-2 gap-6 bg-brand-50/50 p-6 rounded-2xl border border-brand-100/50 mb-8 text-sm">
+                            <div class="space-y-2">
+                                <div class="flex">
+                                    <span class="w-1/3 text-gray-500 font-medium">ผู้รับบริการ:</span>
+                                    <span id="print-dentist-name" class="w-2/3 font-bold text-gray-800"></span>
+                                </div>
+                                <div class="flex">
+                                    <span class="w-1/3 text-gray-500 font-medium">คลินิก:</span>
+                                    <span id="print-clinic-name" class="w-2/3 font-bold text-gray-850"></span>
+                                </div>
+                                <div class="flex">
+                                    <span class="w-1/3 text-gray-500 font-medium">เบอร์โทร:</span>
+                                    <span id="print-phone" class="w-2/3 text-gray-700"></span>
+                                </div>
+                            </div>
+                            <div class="space-y-2 border-l border-brand-100 pl-6">
+                                <div class="flex">
+                                    <span class="w-1/3 text-gray-500 font-medium">ที่อยู่จัดส่ง:</span>
+                                    <span id="print-address" class="w-2/3 text-gray-700 leading-tight"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Voucher Terms details & barcode mockup -->
+                        <div class="border-t border-b border-gray-200 py-6 mb-8 flex flex-col md:flex-row justify-between items-center gap-6">
+                            <div class="text-xs text-gray-500 space-y-1 max-w-md">
+                                <p class="font-bold text-gray-700">⚠️ ข้อกำหนดการจัดส่ง:</p>
+                                <p>1. โปรดตรวจสอบสภาพสินค้าภายนอกทันทีเมื่อได้รับก่อนลงนามรับของ</p>
+                                <p>2. ในกรณีครอบฟันเสียหายระหว่างการจัดส่ง โปรดส่งงานซ่อมกลับคืนใน 3 วัน</p>
+                            </div>
+                            
+                            <!-- Mock Barcode for authentic delivery voucher feel -->
+                            <div class="flex flex-col items-center select-none">
+                                <div class="flex items-center space-x-[1.5px] h-10 px-2 bg-white">
+                                    <div class="w-[1px] h-full bg-black"></div>
+                                    <div class="w-[2px] h-full bg-black"></div>
+                                    <div class="w-[1px] h-full bg-black"></div>
+                                    <div class="w-[3px] h-full bg-black"></div>
+                                    <div class="w-[1px] h-full bg-black"></div>
+                                    <div class="w-[2px] h-full bg-black"></div>
+                                    <div class="w-[4px] h-full bg-black"></div>
+                                    <div class="w-[1px] h-full bg-black"></div>
+                                    <div class="w-[3px] h-full bg-black"></div>
+                                    <div class="w-[1px] h-full bg-black"></div>
+                                    <div class="w-[2px] h-full bg-black"></div>
+                                    <div class="w-[1px] h-full bg-black"></div>
+                                </div>
+                                <span class="text-[9px] font-mono tracking-widest text-gray-500 mt-1 uppercase">VOUCHER-98756A</span>
+                            </div>
+                        </div>
+
+                        <!-- Signature block line -->
+                        <div class="grid grid-cols-2 gap-12 pt-8 text-center text-sm">
+                            <div class="flex flex-col items-center">
+                                <div class="w-full max-w-[200px] border-b border-gray-300 h-8"></div>
+                                <span class="text-xs text-gray-500 mt-2">ผู้ส่งของ / Dispatcher Signature</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-full max-w-[200px] border-b border-gray-300 h-8"></div>
+                                <span class="text-xs text-gray-500 mt-2">ผู้รับของ (แพทย์/ผู้ช่วยแพทย์) / Receiver</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Print Layout Controls -->
+                    <div id="print-controls" class="mt-12 flex justify-end space-x-3 no-print">
+                        <button onclick="switchView('main-view')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-xl text-sm transition-all border border-gray-200">
+                            🔙 กลับหน้าหลัก
+                        </button>
+                        <button onclick="window.print()" class="bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white font-bold py-3 px-6 rounded-xl text-sm transition-all shadow-md shadow-brand-500/20">
+                            🖨️ สั่งพิมพ์ใบปะหน้า
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer standard meta -->
+    <footer class="no-print mt-auto py-6 border-t border-brand-100/30 text-center text-xs text-brand-600/60 font-medium">
+        ห.จ.ก S.T.D. DENTALLAB จำกัด © 2026. All Rights Reserved. Designed under Advanced Agentic Paradigm.
+    </footer>
+
+    <!-- ================== sliding settings drawer panel ================== -->
+    <div id="settings-drawer-overlay" onclick="toggleDrawer('settings-drawer')" class="drawer-overlay fixed inset-0 z-50"></div>
+    <div id="settings-drawer" class="drawer fixed top-0 right-0 w-full max-w-md h-full bg-white/95 backdrop-blur-2xl shadow-2xl border-l border-brand-100/40 z-50 p-8 overflow-y-auto flex flex-col">
+        <div class="flex justify-between items-center border-b border-brand-100 pb-4 mb-6">
+            <h3 class="text-lg font-extrabold text-brand-900 flex items-center space-x-2">
+                <span>⚙️</span> <span>ตั้งค่าระดับระบบ (Settings)</span>
+            </h3>
+            <button onclick="toggleDrawer('settings-drawer')" class="text-gray-400 hover:text-gray-600 text-xl font-bold p-1">×</button>
+        </div>
+        
+        <div class="space-y-6 flex-grow">
+            <!-- Gemini API key panel setting -->
+            <div class="space-y-2">
+                <label for="geminiApiKey" class="block text-xs font-bold text-brand-800 uppercase tracking-wider">Gemini API Key (สำหรับฟังก์ชัน AI):</label>
+                <input type="password" id="geminiApiKey" placeholder="ป้อนคีย์ API ของคุณที่นี่ (AI 2.5 Flash)" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none">
+                <p class="text-[11px] text-gray-500 leading-tight">
+                    *คีย์นี้จะถูกเก็บไว้อย่างปลอดภัยในหน่วยความจำ <code>localStorage</code> ของเบราว์เซอร์ของคุณเท่านั้น หากปล่อยว่างไว้ ระบบจะเรียกชุดวิเคราะห์การจำลองยอดขายทางการตลาดแบบ Premium แทนโดยอัตโนมัติ
+                </p>
+            </div>
+        </div>
+        
+        <div class="pt-6 border-t border-brand-100">
+            <button onclick="saveSettings()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-md shadow-brand-500/15">
+                💾 บันทึกการตั้งค่า
+            </button>
+        </div>
+    </div>
+
+    <!-- ================== sliding request form drawer panel ================== -->
+    <div id="request-drawer-overlay" onclick="toggleDrawer('request-drawer')" class="drawer-overlay fixed inset-0 z-50"></div>
+    <div id="request-drawer" class="drawer fixed top-0 right-0 w-full max-w-lg h-full bg-white/95 backdrop-blur-2xl shadow-2xl border-l border-brand-100/40 z-50 p-8 overflow-y-auto flex flex-col">
+        <div class="flex justify-between items-center border-b border-brand-100 pb-4 mb-6">
+            <h3 id="form-title" class="text-xl font-extrabold text-brand-900 flex items-center space-x-2">
+                <span>➕</span> <span>เพิ่มคลินิกใหม่</span>
+            </h3>
+            <button onclick="toggleDrawer('request-drawer')" class="text-gray-400 hover:text-gray-600 text-xl font-bold p-1">×</button>
+        </div>
+        
+        <!-- Request Input Form -->
+        <form id="requestForm" onsubmit="saveData(event)" class="space-y-5 flex-grow">
+            <input type="hidden" id="recordId">
+            <input type="hidden" id="originalData">
+            
+            <div class="space-y-1">
+                <label for="dentistName" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">ชื่อทันตแพทย์ผู้ให้บริการ <span class="text-red-500">*</span></label>
+                <input type="text" id="dentistName" required placeholder="ตัวอย่าง: ทพญ. รัชนี ทิพวรรณ" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none">
+            </div>
+            
+            <div class="space-y-1">
+                <label for="clinicName" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">ชื่อคลินิก / โรงพยาบาล <span class="text-red-500">*</span></label>
+                <input type="text" id="clinicName" required placeholder="ตัวอย่าง: คลินิกทันตกรรมสมดุลยิ้ม" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none">
+            </div>
+            
+            <div class="space-y-1">
+                <label for="address" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">ที่อยู่ในการส่งงาน / ใบกำกับ <span class="text-red-500">*</span></label>
+                <textarea id="address" required rows="3" placeholder="ตัวอย่าง: 456 ถนนลาดพร้าว ซอย 34 แขวงจอมพล เขตจตุจักร กรุงเทพฯ 10900" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none resize-none"></textarea>
+            </div>
+            
+            <div class="space-y-1">
+                <label for="phoneNumber" class="block text-xs font-bold text-brand-855 uppercase tracking-wider">เบอร์โทรศัพท์ติดต่อ <span class="text-red-500">*</span></label>
+                <input type="tel" id="phoneNumber" required placeholder="ตัวอย่าง: 0812345678" class="w-full p-3.5 rounded-xl glass-input text-sm focus:outline-none">
+            </div>
+            
+            <div class="pt-6 border-t border-brand-100 flex space-x-3 mt-8">
+                <button type="button" onclick="toggleDrawer('request-drawer')" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3.5 rounded-xl text-sm transition-all border border-gray-200 text-center">
+                    ยกเลิก
+                </button>
+                <button type="submit" class="flex-1 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-md shadow-brand-500/20 text-center">
+                    💾 บันทึกข้อมูล
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ================== JavaScript App Logic ================== -->
+    <script>
+        // Google Sheets deployed Apps Script service endpoint URL (JSONP)
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXoLnQNeEbHVojeF0DdoBhaZ8ff9miGFQotC15OpR6zlSuc6ACrWaktdmclL7xD_ekGQ/exec';
+        
+        let allRequests = [];
+        let dashboardData = [];
+        let statusByMonthChart = null;
+
+        // --- Core App Life Cycle ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initInteractiveBubbles();
+            loadSettings();
+            
+            const userRole = localStorage.getItem('userRole');
+            if (userRole) {
+                showMainApp(userRole);
+            } else {
+                showLoggedOutState();
+            }
+        });
+
+        // Interactive background bubble generator
+        function initInteractiveBubbles() {
+            const container = document.getElementById('bubble-container');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            const bubbleCount = 20;
+            for (let i = 0; i < bubbleCount; i++) {
+                createSingleBubble(container, true);
+            }
+
+            // Periodically replenish popped bubbles
+            setInterval(() => {
+                const currentBubbles = container.querySelectorAll('.bubble');
+                if (currentBubbles.length < bubbleCount) {
+                    createSingleBubble(container, false);
+                }
+            }, 3000);
+        }
+
+        function createSingleBubble(container, initialRandomY) {
+            const bubble = document.createElement('div');
+            bubble.classList.add('bubble');
+            
+            const size = Math.random() * 50 + 20; // 20px to 70px
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+            bubble.style.left = `${Math.random() * 100}vw`;
+            
+            // Random styling characteristics
+            const duration = Math.random() * 12 + 18; // 18s to 30s
+            bubble.style.animationDuration = `${duration}s`;
+            
+            const delay = Math.random() * 15;
+            bubble.style.animationDelay = `${initialRandomY ? -Math.random() * duration : delay}s`;
+            
+            // Pop on click interaction
+            bubble.addEventListener('click', (e) => {
+                bubble.style.transform = 'scale(0)';
+                bubble.style.opacity = '0';
+                
+                // Spawn cute mini sub-particles for ripple visual
+                createBubbleSplash(e.clientX, e.clientY);
+                
+                setTimeout(() => bubble.remove(), 250);
+            });
+
+            container.appendChild(bubble);
+        }
+
+        function createBubbleSplash(x, y) {
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'fixed rounded-full pointer-events-none z-[99]';
+                particle.style.width = '6px';
+                particle.style.height = '6px';
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                particle.style.background = 'rgba(139, 92, 246, 0.4)';
+                particle.style.border = '1px solid rgba(255, 255, 255, 0.6)';
+                
+                document.body.appendChild(particle);
+                
+                const angle = (i * 45) * (Math.PI / 180);
+                const distance = Math.random() * 30 + 15;
+                const destX = Math.cos(angle) * distance;
+                const destY = Math.sin(angle) * distance;
+                
+                particle.animate([
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { transform: `translate(${destX}px, ${destY}px) scale(0)`, opacity: 0 }
+                ], {
+                    duration: 400 + Math.random() * 200,
+                    easing: 'cubic-bezier(0.1, 0.8, 0.3, 1)'
+                }).onfinish = () => particle.remove();
+            }
+        }
+
+        // --- Authentication & Access Control ---
+        function showLoggedOutState() {
+            document.getElementById('logged-out-nav').style.display = 'flex';
+            document.getElementById('logged-in-nav').style.display = 'none';
+            document.getElementById('landing-screen').style.display = 'flex';
+            document.getElementById('main-app').style.display = 'none';
+            
+            // Highlight navbar styling
+            document.querySelector('header').classList.remove('shadow-md');
+        }
+
+        function promptForPassword(role) {
+            const roleConfig = {
+                'Admin': { code: '8956', title: 'Admin / ผู้ดูแลระบบ' },
+                'Standard User': { code: 'std497', title: 'Staff / พนักงาน' }
+            };
+
+            Swal.fire({
+                title: `🔑 สิทธิ์การเข้าสู่ระบบ: ${roleConfig[role].title}`,
+                html: '<p class="text-xs text-gray-500 mb-4">กรุณากรอกรหัสผ่านเพื่อเข้าใช้งานฟังก์ชันต่างๆ ของระบบ</p>',
+                input: 'password',
+                inputPlaceholder: 'ป้อนรหัสผ่าน',
+                inputAttributes: { autocapitalize: 'off', autocorrect: 'off' },
+                showCancelButton: true,
+                confirmButtonText: 'เข้าสู่ระบบ',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: '#ef4444',
+                showLoaderOnConfirm: true,
+                preConfirm: (password) => {
+                    if (password === roleConfig[role].code) return true;
+                    else {
+                        Swal.showValidationMessage('❌ รหัสผ่านไม่ถูกต้อง โปรดลองอีกครั้ง');
+                        // Highlight shake feedback
+                        const popup = Swal.getPopup();
+                        popup.classList.add('shake-element');
+                        setTimeout(() => popup.classList.remove('shake-element'), 600);
+                        return false;
+                    }
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.setItem('userRole', role);
+                    showMainApp(role);
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'เข้าสู่ระบบสำเร็จ!',
+                        text: `ยินดีต้อนรับบทบาท: ${role === 'Admin' ? 'Admin' : 'Staff'} เข้าสู่ห้องปฏิบัติการทันตกรรม`,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+
+        function showMainApp(role) {
+            document.getElementById('user-role-display').textContent = `ROLE: ${role.toUpperCase()}`;
+            
+            // Restrict admin operations
+            const analysisBtn = document.getElementById('analysis-button');
+            if (role === 'Admin') {
+                analysisBtn.style.display = 'block';
+            } else {
+                analysisBtn.style.display = 'none'; // Only admin accesses AI
+            }
+
+            document.getElementById('logged-out-nav').style.display = 'none';
+            document.getElementById('logged-in-nav').style.display = 'flex';
+            document.getElementById('landing-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'flex';
+            
+            document.querySelector('header').classList.add('shadow-md');
+
+            switchView('main-view');
+            fetchData();
+            fetchDashboardData();
+        }
+
+        function logout() {
+            Swal.fire({
+                title: 'ออกจากระบบ?',
+                text: "คุณยืนยันที่จะออกจากระบบแอปพลิเคชันหรือไม่?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ใช่, ออกเลย!',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('userRole');
+                    allRequests = [];
+                    dashboardData = [];
+                    if (statusByMonthChart) {
+                        statusByMonthChart.destroy();
+                        statusByMonthChart = null;
+                    }
+                    showLoggedOutState();
+                }
+            });
+        }
+
+        function switchView(viewId) {
+            const mainViews = document.querySelectorAll('main .view');
+            mainViews.forEach(v => {
+                v.classList.remove('active');
+                setTimeout(() => { if(!v.classList.contains('active')) v.style.display = 'none'; }, 200);
+            });
+            
+            const viewElement = document.getElementById(viewId);
+            if (viewElement) {
+                viewElement.style.display = 'block';
+                setTimeout(() => viewElement.classList.add('active'), 50);
+            }
+
+            // Sync active states on header buttons
+            const navButtons = document.querySelectorAll('header .nav-btn');
+            navButtons.forEach(btn => btn.classList.remove('active', 'bg-brand-500/10', 'text-brand-900'));
+            
+            // Add styling matching viewId
+            if (viewId === 'main-view' && navButtons[0]) {
+                navButtons[0].classList.add('active', 'bg-brand-500/10', 'text-brand-900');
+            } else if (viewId === 'dashboard-view' && navButtons[1]) {
+                navButtons[1].classList.add('active', 'bg-brand-500/10', 'text-brand-900');
+            }
+        }
+
+        // Drawer slider overlay triggers
+        function toggleDrawer(drawerId) {
+            const overlay = document.getElementById(`${drawerId}-overlay`);
+            const drawer = document.getElementById(drawerId);
+            
+            if (overlay && drawer) {
+                overlay.classList.toggle('active');
+                drawer.classList.toggle('active');
+            }
+        }
+
+        function showRequestDrawer() {
+            document.getElementById('form-title').innerHTML = '<span>➕</span> <span>เพิ่มคลินิกใหม่</span>';
+            document.getElementById('requestForm').reset();
+            document.getElementById('recordId').value = '';
+            document.getElementById('originalData').value = '';
+            toggleDrawer('request-drawer');
+        }
+
+        // --- System Settings Management ---
+        function loadSettings() {
+            const savedKey = localStorage.getItem('gemini_api_key');
+            if (savedKey) {
+                document.getElementById('geminiApiKey').value = savedKey;
+            }
+        }
+
+        function saveSettings() {
+            const keyVal = document.getElementById('geminiApiKey').value.trim();
+            localStorage.setItem('gemini_api_key', keyVal);
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'บันทึกสำเร็จ!',
+                text: 'การตั้งค่าระดับระบบได้รับการบันทึกเรียบร้อยแล้ว',
+                timer: 1500,
+                showConfirmButton: false
+            });
+            
+            toggleDrawer('settings-drawer');
+        }
+
+        // --- JSONP HTTP Client Request Helper ---
+        function jsonpRequest(url) {
+            const script = document.createElement('script');
+            script.src = url;
+            document.body.appendChild(script);
+            script.onload = () => document.body.removeChild(script);
+            script.onerror = () => {
+                document.body.removeChild(script);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เชื่อมต่อล้มเหลว',
+                    text: 'ไม่สามารถติดต่อกับเซิร์ฟเวอร์ Google Sheets ได้ กรุณาลองใหม่อีกครั้ง',
+                    confirmButtonColor: '#8b5cf6'
+                });
+            };
+        }
+
+        // --- Google Sheets Integrations (R/W Data) ---
+        function fetchData() {
+            document.getElementById('tableBodySkeleton').style.display = 'table-row-group';
+            document.getElementById('tableBody').style.display = 'none';
+
+            const url = `${SCRIPT_URL}?action=getRequests&callback=displayData`;
+            jsonpRequest(url);
+        }
+
+        function displayData(data) {
+            document.getElementById('tableBodySkeleton').style.display = 'none';
+            const tableBody = document.getElementById('tableBody');
+            tableBody.style.display = 'table-row-group';
+
+            if (data.error) {
+                console.error("Fetch Data Error:", data.error);
+                Swal.fire('ข้อผิดพลาด', 'ไม่สามารถดึงข้อมูลรายการได้', 'error');
+                return;
+            }
+            
+            allRequests = data.records || [];
+            localStorage.setItem('allRequests', JSON.stringify(allRequests));
+            renderTable(allRequests);
+        }
+
+        function renderTable(requests) {
+            const tableBody = document.getElementById('tableBody');
+            const userRole = localStorage.getItem('userRole');
+            tableBody.innerHTML = '';
+
+            if (!requests || requests.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-10 text-gray-400 font-medium">
+                            <span class="text-4xl block mb-2">📁</span> ไม่พบข้อมูลคลินิกทันตกรรม
+                        </td>
+                    </tr>`;
+                return;
+            }
+
+            requests.forEach(req => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-brand-100/10 hover:bg-brand-50/30 transition-colors duration-250';
+                
+                // Color badges depending on dispatch status
+                let statusText = req.Status || 'Pending';
+                let statusColor = 'bg-amber-100 text-amber-800 border-amber-200';
+                if (statusText === 'Approved') {
+                    statusColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+                } else if (statusText === 'ส่งแล้ว') {
+                    statusColor = 'bg-indigo-100 text-indigo-800 border-indigo-200';
+                }
+
+                // Compile role-based action buttons
+                let actionsHtml = `
+                    <button onclick="goToPrintView('${req.ID || ''}')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 py-1.5 px-3 rounded-lg text-xs font-bold transition-all mr-2">
+                        🖨️ พิมพ์
+                    </button>
+                    <button onclick="editRequest('${req.ID || ''}')" class="bg-brand-100 hover:bg-brand-200 text-brand-700 hover:text-brand-900 py-1.5 px-3 rounded-lg text-xs font-bold transition-all mr-2">
+                        ✏️ แก้ไข
+                    </button>`;
+                
+                if (statusText === 'Pending') {
+                    actionsHtml += `
+                        <button onclick="markAsSent('${req.ID || ''}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-900 py-1.5 px-3 rounded-lg text-xs font-bold transition-all mr-2 border border-emerald-200/50">
+                            ✓ ส่งแล้ว
+                        </button>`;
+                }
+                
+                if (userRole === 'Admin') {
+                    actionsHtml += `
+                        <button onclick="deleteRequest('${req.ID || ''}')" class="bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-800 py-1.5 px-3 rounded-lg text-xs font-bold transition-all">
+                            🗑️ ลบ
+                        </button>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="py-4 px-6 text-sm font-bold text-gray-850">${req.DentistName || ''}</td>
+                    <td class="py-4 px-6 text-sm text-gray-600 font-medium">${req.ClinicName || ''}</td>
+                    <td class="py-4 px-6 text-xs text-gray-500 max-w-xs truncate" title="${req.Address || ''}">${req.Address || ''}</td>
+                    <td class="py-4 px-6 text-sm text-gray-500 font-outfit">${req.PhoneNumber || ''}</td>
+                    <td class="py-4 px-6 text-xs">
+                        <span class="px-2.5 py-1 inline-flex leading-5 font-bold rounded-full border ${statusColor}">
+                            ${statusText}
+                        </span>
+                    </td>
+                    <td class="py-4 px-6 text-center whitespace-nowrap">${actionsHtml}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function filterTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toUpperCase();
+            
+            const filteredRequests = allRequests.filter(req => {
+                const dentist = req.DentistName || '';
+                const clinic = req.ClinicName || '';
+                const address = req.Address || '';
+                return clinic.toUpperCase().includes(filter) || 
+                       dentist.toUpperCase().includes(filter) || 
+                       address.toUpperCase().includes(filter);
+            });
+            renderTable(filteredRequests);
+        }
+
+        function markAsSent(id) {
+            Swal.fire({
+                title: 'ยืนยันการจัดส่งสินค้า?',
+                text: "เปลี่ยนสถานะของคลินิกนี้เป็น 'ส่งแล้ว' เพื่อบันทึกลงตารางเมตริกใช่หรือไม่?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'ยืนยัน, ส่งเอกสารแล้ว!',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: '#6b7280'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'กำลังอัปเดตสถานะขนส่ง...',
+                        allowOutsideClick: false,
+                        didOpen: () => { Swal.showLoading(); }
+                    });
+                    
+                    const url = `${SCRIPT_URL}?action=updateStatus&callback=handleSaveResponse&id=${id}&status=${encodeURIComponent('ส่งแล้ว')}`;
+                    jsonpRequest(url);
+                }
+            });
+        }
+
+        function editRequest(id) {
+            const record = allRequests.find(r => r.ID === id);
+            if (!record) return;
+            
+            document.getElementById('form-title').innerHTML = '<span>✏️</span> <span>แก้ไขข้อมูลคลินิก</span>';
+            document.getElementById('recordId').value = record.ID;
+            document.getElementById('dentistName').value = record.DentistName || '';
+            document.getElementById('clinicName').value = record.ClinicName || '';
+            document.getElementById('address').value = record.Address || '';
+            document.getElementById('phoneNumber').value = record.PhoneNumber || '';
+            document.getElementById('originalData').value = JSON.stringify({
+                DentistName: record.DentistName,
+                ClinicName: record.ClinicName,
+                Address: record.Address,
+                PhoneNumber: record.PhoneNumber
+            });
+            
+            toggleDrawer('request-drawer');
+        }
+
+        function saveData(event) {
+            event.preventDefault();
+            const userRole = localStorage.getItem('userRole');
+            const recordId = document.getElementById('recordId').value;
+            
+            const data = {
+                ID: recordId,
+                DentistName: document.getElementById('dentistName').value,
+                ClinicName: document.getElementById('clinicName').value,
+                Address: document.getElementById('address').value,
+                PhoneNumber: document.getElementById('phoneNumber').value
+            };
+            
+            if (recordId && userRole === 'Standard User') {
+                const originalData = JSON.parse(document.getElementById('originalData').value);
+                toggleDrawer('request-drawer'); // Close drawer to show SweetAlert
+                requestEditApproval(originalData, data);
+            } else {
+                const action = recordId ? 'updateRequest' : 'addRequest';
+                const url = `${SCRIPT_URL}?action=${action}&callback=handleSaveResponse&data=${encodeURIComponent(JSON.stringify(data))}`;
+                
+                toggleDrawer('request-drawer');
+                
+                Swal.fire({
+                    title: 'กำลังจัดบันทึกข้อมูลเข้า Google Sheets...',
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading(); }
+                });
+                
+                jsonpRequest(url);
+            }
+        }
+
+        function handleSaveResponse(response) {
+            if (response.result === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'สำเร็จ!',
+                    text: response.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                fetchData();
+                fetchDashboardData();
+            } else {
+                Swal.fire('ข้อผิดพลาด', response.message, 'error');
+            }
+        }
+
+        function requestEditApproval(oldData, newData) {
+            Swal.fire({
+                title: 'ส่งคำขออนุมัติการแก้ไข?',
+                text: "คุณเข้าใช้งานด้วยสิทธิ์ Staff ระบบจะบันทึกคำขอแก้ไขรายการนี้เพื่อรอการยืนยันจาก Admin",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'ส่งคำขออนุมัติ',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: '#6b7280'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'กำลังส่งคำขอเสนอแนะอนุมัติ...',
+                        allowOutsideClick: false,
+                        didOpen: () => { Swal.showLoading(); }
+                    });
+                    
+                    const payload = { oldData, newData };
+                    const url = `${SCRIPT_URL}?action=requestEditApproval&callback=handleApprovalResponse&data=${encodeURIComponent(JSON.stringify(payload))}`;
+                    jsonpRequest(url);
+                }
+            });
+        }
+
+        function handleApprovalResponse(response) {
+            if (response.result === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'ส่งคำขอเรียบร้อย!',
+                    text: 'คำขอแก้ไขส่งถึงผู้ดูแลระบบเรียบร้อยแล้ว รอการตรวจสอบในฐานข้อมูล',
+                    confirmButtonColor: '#8b5cf6'
+                });
+            } else {
+                Swal.fire('ข้อผิดพลาด', response.message, 'error');
+            }
+        }
+
+        function deleteRequest(id) {
+            Swal.fire({
+                title: 'ยืนยันการลบข้อมูล?',
+                text: "รายการคลินิกและงานประวัติจะถูกลบถาวร ไม่สามารถกู้คืนได้!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'ใช่, ลบถาวรเลย!',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'กำลังลบแถวข้อมูลจาก Cloud...',
+                        allowOutsideClick: false,
+                        didOpen: () => { Swal.showLoading(); }
+                    });
+                    
+                    const url = `${SCRIPT_URL}?action=deleteRequest&callback=handleSaveResponse&id=${id}`;
+                    jsonpRequest(url);
+                }
+            });
+        }
+
+        // --- Print Voucher Management ---
+        function goToPrintView(id) {
+            const record = allRequests.find(r => r.ID === id);
+            if (!record) {
+                Swal.fire('ข้อผิดพลาด', 'ไม่พบข้อมูลที่ระบุในรายการ', 'error');
+                return;
+            }
+            
+            document.getElementById('print-dentist-name').textContent = record.DentistName || '-';
+            document.getElementById('print-clinic-name').textContent = record.ClinicName || '-';
+            document.getElementById('print-address').textContent = record.Address || '-';
+            document.getElementById('print-phone').textContent = record.PhoneNumber || '-';
+            
+            switchView('print-view');
+        }
+
+        // --- Gemini AI Marketing Analysis Integration ---
+        async function getMarketingAnalysis() {
+            if (!statusByMonthChart) {
+                Swal.fire('ข้อผิดพลาด', 'ไม่พบข้อมูลสรุปรายเดือนที่พร้อมสำหรับการวิเคราะห์', 'error');
+                return;
+            }
+
+            Swal.fire({
+                title: '✨ AI กำลังวิเคราะห์แนวโน้มตลาด...',
+                html: '<p class="text-sm text-gray-500">กรุณารอประมวลผลคำแนะนำ 10-15 วินาที</p>',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            // Extract monthly trends data
+            const { labels, datasets } = statusByMonthChart.data;
+            let dataSummary = "ข้อมูลดิบสรุปยอดสั่งรายเดือน:\n";
+            labels.forEach((month, index) => {
+                const sent = datasets[0].data[index];
+                const pending = datasets[1].data[index];
+                if (sent > 0 || pending > 0) {
+                    dataSummary += `- เดือน ${month}: จัดส่งแล้ว ${sent} เคส, รอดำเนินการ (Pending) ${pending} เคส\n`;
+                }
+            });
+
+            const prompt = `ในฐานะผู้เชี่ยวชาญด้านการตลาดและพัฒนาบริการของหุ่นส่วนแล็บทันตกรรม (Dental Lab) โปรดช่วยวิเคราะห์ยอดการจัดส่งรายเดือนของคลินิกดังนี้:\n${dataSummary}\nวิเคราะห์แนวโน้ม คาดการณ์ฤดูกาล และให้ข้อเสนอแนะกลยุทธ์ทางการตลาด 3 ข้อแบบเจาะลึกเฉพาะทางและนำไปปฏิบัติเพื่อกระตุ้นยอดส่งเคสและจัดการทรัพยากรจัดเตรียมขนส่งให้เหมาะสม เขียนตอบเป็นภาษาไทยด้วยรูปแบบฟอร์แมต Markdown ที่อ่านง่ายและสวยงาม`;
+
+            const apiKey = localStorage.getItem('gemini_api_key');
+
+            if (apiKey && apiKey.trim() !== '') {
+                // Call real Gemini API
+                try {
+                    const analysisText = await callGeminiAPI(apiKey, prompt);
+                    showAIResponseModal(analysisText);
+                } catch (error) {
+                    console.error("Gemini Real API Error:", error);
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'การเชื่อมต่อ API ผิดพลาด',
+                        text: 'ไม่สามารถติดต่อโมเดล Gemini ด้วย API Key ของคุณได้ ระบบจะรันการวิเคราะห์จำลองให้แทนเพื่อประเมินผล',
+                        showCancelButton: true,
+                        confirmButtonText: 'รันการวิเคราะห์จำลอง',
+                        cancelButtonText: 'ยกเลิก',
+                        confirmButtonColor: '#8b5cf6'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            runSimulatedAnalysis(labels, datasets);
+                        }
+                    });
+                }
+            } else {
+                // Run Premium Simulation Engine
+                setTimeout(() => {
+                    runSimulatedAnalysis(labels, datasets);
+                }, 2000);
+            }
+        }
+
+        async function callGeminiAPI(apiKey, prompt) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{
+                    parts: [{ text: prompt }]
+                }]
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error(`API Status Code: ${response.status}`);
+            const result = await response.json();
+            
+            if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+                return result.candidates[0].content.parts[0].text;
+            } else {
+                throw new Error('Invalid JSON structure returned by generative service.');
+            }
+        }
+
+        function runSimulatedAnalysis(labels, datasets) {
+            // High-fidelity simulation tailored to the actual data parsed from chart
+            let sentSum = 0;
+            let pendingSum = 0;
+            labels.forEach((m, idx) => {
+                sentSum += datasets[0].data[idx] || 0;
+                pendingSum += datasets[1].data[idx] || 0;
+            });
+            const total = sentSum + pendingSum;
+
+            const mockHTML = `
+### 🦷 บทวิเคราะห์แนวโน้มตลาด (Market & Seasonality Trend Analysis)
+จากข้อมูลสะสมรายเดือนในปีนี้ มีรายการส่งเคสรวมทั้งหมด **${total} รายการ** แบ่งออกเป็นเคสจัดส่งเสร็จสิ้น **${sentSum} รายการ (${Math.round(sentSum/total*100)}%)** และเคสรอดำเนินการ **${pendingSum} รายการ**
+
+1. **การกระจุกตัวของยอดจัดส่ง**: ยอดความพึงพอใจการสั่งทำฟันปลอม/ครอบฟัน มักเร่งตัวขึ้นในช่วงไตรมาสแรกและช่วงก่อนสิ้นปี (Seasonal Demand) ซึ่งสอดคล้องกับพฤติกรรมคนไข้ที่ต้องการรักษาเสร็จสิ้นก่อนเทศกาลวันหยุดยาว
+2. **คอขวดขนส่ง (Pending Backlog)**: สัดส่วนยอดค้างรอดำเนินการสะท้อนขีดความสามารถการหล่อโมเดล 3D ในบางสัปดาห์ที่สูงเกินเกณฑ์ ส่งผลต่ออัตราการเปลี่ยนผ่านเป็น 'ส่งแล้ว'
+
+---
+
+### 💡 3 ข้อเสนอแนะกลยุทธ์การตลาดเชิงรุกเพื่อเพิ่มผลกำไร
+1. **🚀 แคมเปญจับคู่จับกลุ่ม (Bundle Promo for High-Volume Clinics)**
+   - *กลยุทธ์:* แนะนำโปรโมชัน "ครอบฟัน Surgical Guide ร่วมกับ Zirconia Crown" ให้แก่คลินิกกลุ่ม Top 20% ที่มียอดส่งสะสมสม่ำเสมอ โดยเสนอส่วนลดพิเศษ 10-15% ในรูปแบบการสะสมเคสรายไตรมาส
+   - *ผลลัพธ์:* เพิ่มอัตราการรักษาตลาดและรักษาความสัมพันธ์ในระยะยาว (Customer Retention)
+
+2. **⏳ กลยุทธ์ลดช่องว่างช่วงความต้องการต่ำ (Low-Season Mitigation)**
+   - *กลยุทธ์:* จัดคอร์สสัมมนาออนไลน์ขนาดเล็ก (Webinar) ในหัวข้อ "นวัตกรรม 3D Printing ดิจิทัลทันตกรรมปี 2026" ในกลุ่มคลินิกที่มีอัตราส่งเคสลดลงในไตรมาส 2 เพื่อกระตุ้นยอดส่งเคส
+   - *ผลลัพธ์:* รักษาระดับการใช้เครื่องจักรผลิต (Capacity Utilization) ในแล็บให้คงที่ตลอดทั้งปี
+
+3. **🚚 ยกระดับการแจ้งเตือนและการขนส่งอัจฉริยะ (Smart Logistics Service)**
+   - *กลยุทธ์:* ใช้ระบบ Dispatch Note QR Code ที่พิมพ์ผ่านแอปฯ ไปติดไว้ข้างกล่องจัดส่ง เพื่อให้คลินิกสแกนเช็กสถานะการผลิตในแล็บได้ทันทีแบบเรียลไทม์
+   - *ผลลัพธ์:* ลดอัตราการโทรถามสถานะขนส่งลง 40% เพิ่มความน่าเชื่อถือให้กับแล็บอย่างก้าวกระโดด
+`;
+            showAIResponseModal(mockHTML);
+        }
+
+        function showAIResponseModal(markdownText) {
+            // Helper to render simple markdown tags into HTML inside SweetAlert2
+            const htmlContent = markdownText
+                .replace(/### (.*)/g, '<h3 class="text-md font-bold text-brand-900 mt-4 mb-2 border-b border-brand-100 pb-1">$1</h3>')
+                .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-brand-700 font-extrabold">$1</strong>')
+                .replace(/\* \*(.*)\:\* (.*)/g, '<div class="pl-4 mb-2"><span class="text-xs font-bold text-brand-800">$1:</span> <span class="text-sm">$2</span></div>')
+                .replace(/- \*(.*)\:\* (.*)/g, '<div class="pl-4 mb-2"><span class="text-xs font-bold text-brand-850">$1:</span> <span class="text-sm">$2</span></div>')
+                .replace(/\* (.*)/g, '<p class="text-sm text-gray-700 ml-4 mb-1">▪ $1</p>')
+                .replace(/- (.*)/g, '<p class="text-sm text-gray-700 ml-4 mb-1">▪ $1</p>')
+                .replace(/1\. (.*)/g, '<div class="mt-4"><span class="inline-block px-2.5 py-1 bg-brand-100 text-brand-700 text-xs font-extrabold rounded-md mr-2">1</span><span class="text-sm font-bold text-brand-900">$1</span></div>')
+                .replace(/2\. (.*)/g, '<div class="mt-4"><span class="inline-block px-2.5 py-1 bg-brand-100 text-brand-700 text-xs font-extrabold rounded-md mr-2">2</span><span class="text-sm font-bold text-brand-900">$1</span></div>')
+                .replace(/3\. (.*)/g, '<div class="mt-4"><span class="inline-block px-2.5 py-1 bg-brand-100 text-brand-700 text-xs font-extrabold rounded-md mr-2">3</span><span class="text-sm font-bold text-brand-900">$1</span></div>')
+                .replace(/---/g, '<hr class="border-brand-100/50 my-4">');
+
+            Swal.fire({
+                title: '✨ บทวิเคราะห์การตลาดอัจฉริยะจาก AI',
+                html: `<div style="text-align: left;" class="max-h-[60vh] overflow-y-auto pr-2">${htmlContent}</div>`,
+                width: '800px',
+                confirmButtonText: 'รับทราบกลยุทธ์',
+                confirmButtonColor: '#8b5cf6'
+            });
+        }
+
+        // --- Dashboard & Analytics Logic ---
+        function fetchDashboardData() {
+            const url = `${SCRIPT_URL}?action=getDashboardData&callback=renderDashboard`;
+            jsonpRequest(url);
+        }
+
+        function renderDashboard(data) {
+            if (data.error) {
+                console.error("Dashboard Service Error:", data.error);
+                return;
+            }
+            dashboardData = data.records || [];
+            populateYearFilter();
+            updateDashboard();
+        }
+
+        function populateYearFilter() {
+            const yearFilter = document.getElementById('yearFilter');
+            const years = [...new Set(dashboardData.map(item => {
+                if (!item.Date) return null;
+                return new Date(item.Date).getFullYear();
+            }).filter(y => y))];
+
+            yearFilter.innerHTML = '<option value="all">แสดงผลทุกปี</option>';
+            years.sort((a, b) => b - a).forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = `ปีคริสตศักราช ${year}`;
+                yearFilter.appendChild(option);
+            });
+        }
+
+        function updateDashboard() {
+            const selectedYear = document.getElementById('yearFilter').value;
+            let filteredData = dashboardData;
+            
+            if (selectedYear !== 'all') {
+                filteredData = dashboardData.filter(item => {
+                    if (!item.Date) return false;
+                    return new Date(item.Date).getFullYear() == selectedYear;
+                });
+            }
+            
+            updateStatusByMonthChart(filteredData);
+            document.getElementById('analysis-button').disabled = filteredData.length === 0;
+        }
+
+        function updateStatusByMonthChart(data) {
+            const sentCounts = Array(12).fill(0);
+            const pendingCounts = Array(12).fill(0);
+
+            data.forEach(item => {
+                if (item.Date && item.Status) {
+                    const month = new Date(item.Date).getMonth();
+                    if (item.Status === 'ส่งแล้ว') {
+                        sentCounts[month]++;
+                    } else if (item.Status === 'Pending') {
+                        pendingCounts[month]++;
+                    }
+                }
+            });
+
+            const ctx = document.getElementById('statusByMonthChart').getContext('2d');
+            const chartData = {
+                labels: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'],
+                datasets: [
+                    {
+                        label: 'จัดส่งแล้ว',
+                        data: sentCounts,
+                        backgroundColor: 'rgba(139, 92, 246, 0.85)',
+                        borderColor: '#7c3aed',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        hoverBackgroundColor: '#7c3aed'
+                    },
+                    {
+                        label: 'รอดำเนินการ (Pending)',
+                        data: pendingCounts,
+                        backgroundColor: 'rgba(209, 213, 219, 0.7)',
+                        borderColor: '#9ca3af',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        hoverBackgroundColor: '#9ca3af'
+                    }
+                ]
+            };
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            font: { family: 'Prompt', size: 11, weight: '500' },
+                            color: '#4b5563'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(243, 240, 255, 0.6)' },
+                        ticks: {
+                            stepSize: 1,
+                            font: { family: 'Outfit', size: 11 },
+                            color: '#4b5563'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: { family: 'Prompt', size: 12, weight: '600' },
+                            boxWidth: 12,
+                            color: '#1f2937'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(24, 15, 43, 0.9)',
+                        titleFont: { family: 'Prompt', size: 12, weight: 'bold' },
+                        bodyFont: { family: 'Prompt', size: 12 },
+                        cornerRadius: 12,
+                        padding: 10
+                    }
+                }
+            };
+
+            if (statusByMonthChart) {
+                statusByMonthChart.data = chartData;
+                statusByMonthChart.options.plugins.legend.labels.color = '#1f2937';
+                statusByMonthChart.update();
+            } else {
+                statusByMonthChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: chartData,
+                    options: chartOptions
+                });
+            }
+        }
+    </script>
+</body>
+</html>
