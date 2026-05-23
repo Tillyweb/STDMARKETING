@@ -711,6 +711,7 @@
         let allRequests = [];
         let dashboardData = [];
         let statusByMonthChart = null;
+        let isDemoMode = false;
 
         // --- Core App Life Cycle ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -982,17 +983,99 @@
             script.onload = () => document.body.removeChild(script);
             script.onerror = () => {
                 document.body.removeChild(script);
+                
                 Swal.fire({
-                    icon: 'error',
-                    title: 'เชื่อมต่อล้มเหลว',
-                    text: 'ไม่สามารถติดต่อกับเซิร์ฟเวอร์ Google Sheets ได้ กรุณาลองใหม่อีกครั้ง',
-                    confirmButtonColor: '#8b5cf6'
+                    icon: 'warning',
+                    title: '📡 เชื่อมต่อคลาวด์ล้มเหลว',
+                    html: '<p class="text-sm text-gray-500 mb-2">ไม่สามารถติดต่อฐานข้อมูลขนส่งของแล็บบน Google Sheets ได้</p><p class="text-xs text-brand-700 font-bold">ต้องการใช้โหมดจำลองระบบ (Demo Mode) ทันทีเพื่อประเมินหน้าตาและการทำงานหรือไม่?</p>',
+                    showCancelButton: true,
+                    confirmButtonText: '📶 เปิดโหมดสาธิต (Demo)',
+                    cancelButtonText: 'ลองใหม่อีกครั้ง',
+                    confirmButtonColor: '#8b5cf6',
+                    cancelButtonColor: '#4c1d95'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        loadDemoMode();
+                    } else {
+                        fetchData();
+                    }
                 });
             };
         }
 
+        function loadDemoMode() {
+            isDemoMode = true;
+            
+            // Add demo mode visual badge indicator
+            if (!document.getElementById('demo-mode-badge')) {
+                const badge = document.createElement('div');
+                badge.id = 'demo-mode-badge';
+                badge.className = 'fixed bottom-6 right-6 z-[99] bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-xs py-2.5 px-4 rounded-full border border-amber-400 shadow-lg shadow-amber-500/25 flex items-center space-x-2 animate-bounce select-none';
+                badge.innerHTML = '<span>⚠️</span> <span>โหมดสาธิต (Demo Mode)</span>';
+                document.body.appendChild(badge);
+            }
+            
+            // Rich mock lists
+            allRequests = [
+                { ID: "DEMO-001", DentistName: "ทพ.สมชาย ยินดี", ClinicName: "คลินิกทันตกรรมรักยิ้ม ลาดพร้าว", Address: "123 ถนนลาดพร้าว ซอย 12 แขวงจอมพล เขตจตุจักร กรุงเทพฯ 10900", PhoneNumber: "0812345678", Status: "ส่งแล้ว", Date: "2026-01-10" },
+                { ID: "DEMO-002", DentistName: "ทพญ. รัชนี ทิพวรรณ", ClinicName: "คลินิกทันตกรรมสมดุลยิ้ม สุขุมวิท", Address: "456 ถนนสุขุมวิท ซอย 24 แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110", PhoneNumber: "0898765432", Status: "Pending", Date: "2026-02-15" },
+                { ID: "DEMO-003", DentistName: "ทพ. อนันต์ รักษ์ฟัน", ClinicName: "โรงพยาบาลฟันดีเดนทัล พหลโยธิน", Address: "789 ถนนพหลโยธิน แขวงสามเสนใน เขตพญาไท กรุงเทพฯ 10400", PhoneNumber: "0865551234", Status: "Approved", Date: "2026-03-20" },
+                { ID: "DEMO-004", DentistName: "ทพญ. วรรณภา วงศ์ดี", ClinicName: "คลินิกทันตกรรมสไมล์เซ็นเตอร์", Address: "99 ถนนรัชดาภิเษก แขวงดินแดง เขตดินแดง กรุงเทพฯ 10400", PhoneNumber: "0951112222", Status: "ส่งแล้ว", Date: "2026-01-25" },
+                { ID: "DEMO-005", DentistName: "ทพ. สุรพล เลิศทันต์", ClinicName: "คลินิกทันตกรรมฟันสวยงาม", Address: "22/1 ถนนพระราม 9 แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพฯ 10310", PhoneNumber: "0887778888", Status: "Pending", Date: "2026-02-05" },
+                { ID: "DEMO-006", DentistName: "ทพญ. สุดา ศรีเดนทัล", ClinicName: "เดนทัลแคร์คลินิก", Address: "101 ถนนรามคำแหง แขวงหัวหมาก เขตบางกะปิ กรุงเทพฯ 10240", PhoneNumber: "0823334444", Status: "ส่งแล้ว", Date: "2026-03-05" },
+                { ID: "DEMO-007", DentistName: "ทพ. วิชัย มุ่งมั่น", ClinicName: "คลินิกทันตแพทย์วิชัย", Address: "55 ถนนเพชรบุรี แขวงมักกะสัน เขตราชเทวี กรุงเทพฯ 10400", PhoneNumber: "0819990000", Status: "Approved", Date: "2026-04-12" }
+            ];
+            
+            dashboardData = [
+                { Date: "2026-01-05", Status: "ส่งแล้ว" },
+                { Date: "2026-01-12", Status: "ส่งแล้ว" },
+                { Date: "2026-01-15", Status: "Pending" },
+                { Date: "2026-01-20", Status: "ส่งแล้ว" },
+                { Date: "2026-02-02", Status: "ส่งแล้ว" },
+                { Date: "2026-02-08", Status: "Pending" },
+                { Date: "2026-02-14", Status: "Pending" },
+                { Date: "2026-02-22", Status: "ส่งแล้ว" },
+                { Date: "2026-03-01", Status: "ส่งแล้ว" },
+                { Date: "2026-03-10", Status: "ส่งแล้ว" },
+                { Date: "2026-03-15", Status: "Pending" },
+                { Date: "2026-03-24", Status: "ส่งแล้ว" },
+                { Date: "2026-04-05", Status: "ส่งแล้ว" },
+                { Date: "2026-04-18", Status: "Pending" },
+                { Date: "2026-05-02", Status: "ส่งแล้ว" },
+                { Date: "2026-05-15", Status: "ส่งแล้ว" },
+                { Date: "2026-05-28", Status: "Pending" },
+                { Date: "2026-06-12", Status: "ส่งแล้ว" },
+                { Date: "2026-06-25", Status: "ส่งแล้ว" },
+                { Date: "2026-07-04", Status: "ส่งแล้ว" },
+                { Date: "2026-07-19", Status: "Pending" },
+                { Date: "2026-08-10", Status: "ส่งแล้ว" },
+                { Date: "2026-09-15", Status: "ส่งแล้ว" },
+                { Date: "2026-10-02", Status: "ส่งแล้ว" },
+                { Date: "2026-11-14", Status: "Pending" },
+                { Date: "2026-12-20", Status: "ส่งแล้ว" }
+            ];
+            
+            document.getElementById('tableBodySkeleton').style.display = 'none';
+            document.getElementById('tableBody').style.display = 'table-row-group';
+            
+            renderTable(allRequests);
+            populateYearFilter();
+            updateDashboard();
+            
+            Swal.fire({
+                icon: 'info',
+                title: 'เข้าสู่โหมดจำลองสำเร็จ',
+                text: 'คุณสามารถทดสอบการเพิ่ม แก้ไข ลบ และเปลี่ยนสถานะรายการได้แบบโลคอล รวมถึงการวิเคราะห์ทางการตลาดด้วย AI',
+                confirmButtonColor: '#8b5cf6'
+            });
+        }
+
         // --- Google Sheets Integrations (R/W Data) ---
         function fetchData() {
+            if (isDemoMode) {
+                renderTable(allRequests);
+                return;
+            }
             document.getElementById('tableBodySkeleton').style.display = 'table-row-group';
             document.getElementById('tableBody').style.display = 'none';
 
@@ -1116,8 +1199,19 @@
                         didOpen: () => { Swal.showLoading(); }
                     });
                     
-                    const url = `${SCRIPT_URL}?action=updateStatus&callback=handleSaveResponse&id=${id}&status=${encodeURIComponent('ส่งแล้ว')}`;
-                    jsonpRequest(url);
+                    if (isDemoMode) {
+                        setTimeout(() => {
+                            const record = allRequests.find(r => r.ID === id);
+                            if (record) {
+                                record.Status = 'ส่งแล้ว';
+                                dashboardData.push({ Date: new Date().toISOString().split('T')[0], Status: 'ส่งแล้ว' });
+                            }
+                            handleSaveResponse({ result: 'success', message: 'อัปเดตสถานะจัดส่ง (จำลอง) สำเร็จ' });
+                        }, 800);
+                    } else {
+                        const url = `${SCRIPT_URL}?action=updateStatus&callback=handleSaveResponse&id=${id}&status=${encodeURIComponent('ส่งแล้ว')}`;
+                        jsonpRequest(url);
+                    }
                 }
             });
         }
@@ -1160,18 +1254,39 @@
                 toggleDrawer('request-drawer'); // Close drawer to show SweetAlert
                 requestEditApproval(originalData, data);
             } else {
-                const action = recordId ? 'updateRequest' : 'addRequest';
-                const url = `${SCRIPT_URL}?action=${action}&callback=handleSaveResponse&data=${encodeURIComponent(JSON.stringify(data))}`;
-                
                 toggleDrawer('request-drawer');
                 
                 Swal.fire({
-                    title: 'กำลังจัดบันทึกข้อมูลเข้า Google Sheets...',
+                    title: 'กำลังจัดบันทึกข้อมูล...',
                     allowOutsideClick: false,
                     didOpen: () => { Swal.showLoading(); }
                 });
                 
-                jsonpRequest(url);
+                if (isDemoMode) {
+                    setTimeout(() => {
+                        if (recordId) {
+                            const index = allRequests.findIndex(r => r.ID === recordId);
+                            if (index !== -1) {
+                                allRequests[index] = { ...allRequests[index], ...data };
+                            }
+                        } else {
+                            const newId = `DEMO-NEW-${Math.floor(Math.random() * 1000)}`;
+                            const newRecord = { 
+                                ...data, 
+                                ID: newId, 
+                                Status: 'Pending',
+                                Date: new Date().toISOString().split('T')[0]
+                            };
+                            allRequests.push(newRecord);
+                            dashboardData.push({ Date: newRecord.Date, Status: 'Pending' });
+                        }
+                        handleSaveResponse({ result: 'success', message: 'บันทึกรายการ (จำลอง) สำเร็จ' });
+                    }, 800);
+                } else {
+                    const action = recordId ? 'updateRequest' : 'addRequest';
+                    const url = `${SCRIPT_URL}?action=${action}&callback=handleSaveResponse&data=${encodeURIComponent(JSON.stringify(data))}`;
+                    jsonpRequest(url);
+                }
             }
         }
 
@@ -1242,13 +1357,20 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: 'กำลังลบแถวข้อมูลจาก Cloud...',
+                        title: 'กำลังดำเนินการลบข้อมูล...',
                         allowOutsideClick: false,
                         didOpen: () => { Swal.showLoading(); }
                     });
                     
-                    const url = `${SCRIPT_URL}?action=deleteRequest&callback=handleSaveResponse&id=${id}`;
-                    jsonpRequest(url);
+                    if (isDemoMode) {
+                        setTimeout(() => {
+                            allRequests = allRequests.filter(r => r.ID !== id);
+                            handleSaveResponse({ result: 'success', message: 'ลบรายการ (จำลอง) เรียบร้อย' });
+                        }, 800);
+                    } else {
+                        const url = `${SCRIPT_URL}?action=deleteRequest&callback=handleSaveResponse&id=${id}`;
+                        jsonpRequest(url);
+                    }
                 }
             });
         }
@@ -1411,6 +1533,9 @@
 
         // --- Dashboard & Analytics Logic ---
         function fetchDashboardData() {
+            if (isDemoMode) {
+                return;
+            }
             const url = `${SCRIPT_URL}?action=getDashboardData&callback=renderDashboard`;
             jsonpRequest(url);
         }
