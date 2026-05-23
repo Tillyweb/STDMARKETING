@@ -1599,6 +1599,19 @@
 
         function handleSaveResponse(response) {
             if (response.result === 'success') {
+                // If there's a pending outreach status update, make the immediate status update call to overwrite the default 'Pending'
+                if (window.pendingOutreachStatusUpdate) {
+                    const statusToSet = window.pendingOutreachStatusUpdate.Status;
+                    const recordId = window.pendingOutreachStatusUpdate.Id || response.id || (response.record && response.record.ID);
+                    window.pendingOutreachStatusUpdate = null; // Clear it immediately
+                    
+                    if (recordId) {
+                        const updateUrl = `${SCRIPT_URL}?action=updateStatus&callback=handleOutreachStatusResponse&id=${recordId}&status=${encodeURIComponent(statusToSet)}`;
+                        jsonpRequest(updateUrl);
+                        return; // Let handleOutreachStatusResponse show the final success alert
+                    }
+                }
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'สำเร็จ!',
@@ -1611,6 +1624,19 @@
             } else {
                 Swal.fire('ข้อผิดพลาด', response.message, 'error');
             }
+        }
+
+        // Global callback for the outreach status JSONP response
+        window.handleOutreachStatusResponse = function(response) {
+            Swal.fire({
+                icon: 'success',
+                title: 'สำเร็จ!',
+                text: 'บันทึกประวัติการทักเพจและอัปเดตสถานะเรียบร้อยแล้ว',
+                timer: 2000,
+                showConfirmButton: false
+            });
+            fetchData();
+            fetchDashboardData();
         }
 
         function requestEditApproval(oldData, newData) {
@@ -2178,13 +2204,14 @@
         function saveOutreachData(event) {
             event.preventDefault();
             const recordId = document.getElementById('outreachRecordId').value;
+            const targetStatus = document.getElementById('outreachStatus').value;
             
             const data = {
                 ID: recordId,
                 ClinicName: document.getElementById('outreachClinicName').value,
                 Address: document.getElementById('outreachPageLink').value,
                 Date: document.getElementById('outreachDate').value,
-                Status: document.getElementById('outreachStatus').value,
+                Status: targetStatus,
                 Notes: document.getElementById('outreachNotes').value,
                 DentistName: '-',
                 PhoneNumber: '-',
@@ -2214,6 +2241,11 @@
                     handleSaveResponse({ result: 'success', message: 'บันทึกประวัติทักเพจ (จำลอง) สำเร็จ' });
                 }, 800);
             } else {
+                // Intercept status to execute status updates seamlessly
+                window.pendingOutreachStatusUpdate = {
+                    Status: targetStatus,
+                    Id: recordId || null
+                };
                 const action = recordId ? 'updateRequest' : 'addRequest';
                 const url = `${SCRIPT_URL}?action=${action}&callback=handleSaveResponse&data=${encodeURIComponent(JSON.stringify(data))}`;
                 jsonpRequest(url);
